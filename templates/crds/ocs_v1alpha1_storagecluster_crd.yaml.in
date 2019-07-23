@@ -1,0 +1,1 @@
+{{index .OCS.CRDStrings "storageclusters.ocs.openshift.io"}}

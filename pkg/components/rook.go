@@ -1,6 +1,8 @@
 package components
 
 import (
+	"fmt"
+
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
@@ -10,13 +12,13 @@ import (
 
 const (
 	rookCephOperator = "rook-ceph-operator"
-	// TODO: Update with correct image
-	rookCephImage = "rook/ceph:master"
 )
 
 // GetRookCephDeployment returns a Deployment that deploys the rook-ceph
 // operator
-func GetRookCephDeployment() *appsv1.Deployment {
+func GetRookCephDeployment(repository string, tag string, imagePullPolicy string) *appsv1.Deployment {
+	registry_name := repository + "/rook/" + rookCephOperator
+	rookCephImage := fmt.Sprintf("%s:%s", registry_name, tag)
 	deployment := &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "apps/v1",
@@ -605,8 +607,8 @@ func GetRookCephClusterRoles() []rbacv1.ClusterRole {
 
 // GetRookCephCRDs returns a list of CustomResourceDefinitions for the Rook
 // Ceph custom resources.
-func GetRookCephCRDs() []extv1beta1.CustomResourceDefinition {
-	return []extv1beta1.CustomResourceDefinition{
+func GetRookCephCRDs() []*extv1beta1.CustomResourceDefinition {
+	return []*extv1beta1.CustomResourceDefinition{
 		// CephCluster CRD
 		{
 			TypeMeta: metav1.TypeMeta{

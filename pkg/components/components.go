@@ -1,6 +1,8 @@
 package components
 
 import (
+	"fmt"
+
 	ocsv1alpha1 "github.com/openshift/ocs-operator/pkg/apis/ocs/v1alpha1"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -12,12 +14,12 @@ import (
 
 const (
 	operatorName = "ocs-operator"
-	// TODO: Update to use the correct image
-	image = "quay.io/openshift/ocs-operator:v0.0.1"
 )
 
 // GetDeployment returns a Deployment which deploys the OCS operator
-func GetDeployment() *appsv1.Deployment {
+func GetDeployment(repository string, tag string, imagePullPolicy string) *appsv1.Deployment {
+	registry_name := repository + "/openshift/" + operatorName
+	image := fmt.Sprintf("%s:%s", registry_name, tag)
 	deployment := &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "apps/v1",
@@ -46,6 +48,12 @@ func GetDeployment() *appsv1.Deployment {
 							Name:            operatorName,
 							Image:           image,
 							ImagePullPolicy: corev1.PullPolicy(corev1.PullAlways),
+							Ports: []corev1.ContainerPort{
+								{
+									ContainerPort: 60000,
+									Name:          "metrics",
+								},
+							},
 							// TODO: command being name is artifact of operator-sdk usage
 							Command: []string{operatorName},
 							ReadinessProbe: &corev1.Probe{
@@ -204,6 +212,7 @@ func GetCRD() *extv1beta1.CustomResourceDefinition {
 				Plural:   "storageclusters",
 				Singular: "storagecluster",
 				Kind:     "StorageCluster",
+				ListKind: "StorageClusterList",
 			},
 
 			Validation: &extv1beta1.CustomResourceValidation{
@@ -274,10 +283,13 @@ func GetCRD() *extv1beta1.CustomResourceDefinition {
 													Type: "object",
 												},
 											},
+											Required: []string{"name", "count", "resources", "placement", "volumeClaimTemplates"},
+											Type:     "object",
 										},
 									},
 								},
 							},
+							Required: []string{"storageDeviceSets"},
 						},
 					},
 				},

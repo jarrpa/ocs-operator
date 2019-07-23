@@ -1,0 +1,1 @@
+{{if .Converged}}{{index .RCO.CRDStrings "cephblockpools.ocs.openshift.io"}}{{end}}

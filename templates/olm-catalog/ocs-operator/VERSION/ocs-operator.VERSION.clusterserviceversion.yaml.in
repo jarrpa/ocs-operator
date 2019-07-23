@@ -1,0 +1,79 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: |
+      [
+          {
+              "apiVersion": "ocs.openshift.io/v1alpha1",
+              "kind": "StorageCluster",
+              "metadata": {
+                  "name": "example-storagecluster",
+                  "namespace": "openshift-storage"
+              },
+              "spec": {
+                  "manageNodes": false
+              }
+          }
+      ]
+    capabilities: Basic Install
+  name: ocs-operator.v{{.CsvVersion}}
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions:
+    owned:
+    - kind: StorageCluster
+      name: storageclusters.ocs.openshift.io
+      version: v1alpha1
+      displayName: Storage Cluster
+      description: Storage Cluster represents a Rook Ceph storage cluster including all the storage and compute resources required.
+    required:
+    - kind: CephCluster
+      name: cephclusters.ceph.rook.io
+      version: v1
+      displayName: Ceph Cluster
+      description: Represents a Ceph cluster.
+  description: |
+    Red Hat Openshift Container Storage (OCS) provides hyperconverged storage for applications within an Openshift cluster.
+
+    The OCS operator is the primary operator for Red Hat OpenShift Container Storage (OCS). It serves to facilitate the other operators in OCS by performing administrative tasks outside their scope as well as watching and configuring their CustomResources.
+  displayName: Openshift Container Storage Operator
+  install:
+    spec:
+      deployments:
+      - name: ocs-operator
+        spec:
+{{.OCS.DeploymentSpec}}
+      permissions:
+      - rules:
+{{.OCS.Rules}}
+        serviceAccountName: ocs-operator
+    strategy: deployment
+  installModes:
+  - supported: true
+    type: OwnNamespace
+  - supported: true
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: false
+    type: AllNamespaces
+  maturity: alpha
+  version: {{.CsvVersion}}{{if .Replaces}}
+  replaces: ocs-operator.v{{.ReplacesVersion}}{{end}}
+  minKubeVersion: v1.13.0
+  provider:
+    name: Red Hat
+  maintainers:
+  - name: Jose Riviera
+    email: jarrpa@redhat.com
+  links:
+  - name: Source Code
+    url: https://github.com/openshift/ocs-operator
+  keywords:
+  - storage
+  - rook
+  - ceph
+  - block storage
+  - shared filesystem
