@@ -199,7 +199,7 @@ func getRCO(data *templateData) {
 	marshallObject(role, &writer)
 	roleString := writer.String()
 
-	// Get the Rules out of OCSs ClusterRole
+	// Get the Rules out of RCO ClusterRole
 	writer = strings.Builder{}
 	ocsrules := role.Rules
 	for _, rule := range ocsrules {
