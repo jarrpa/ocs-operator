@@ -1,7 +1,9 @@
+---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
-  creationTimestamp: null
+  labels:
+    name: ocs-operator
   name: ocs-operator
 rules:
 - apiGroups:
@@ -28,9 +30,10 @@ rules:
   - deployments
   - daemonsets
   - replicasets
-  - statefulsets
+  - statefulesets
   verbs:
-  - '*'
+  - get
+  - create
 - apiGroups:
   - monitoring.coreos.com
   resources:
@@ -41,7 +44,6 @@ rules:
 - apiGroups:
   - ocs.openshift.io
   resources:
-  - '*'
   - storageclusters
   - ocsinitialization
   verbs:
