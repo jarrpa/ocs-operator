@@ -5,4 +5,4 @@ metadata:
   name: example-storagecluster
   namespace: openshift-storage
 spec:
-  storageDeviceSets: null
+  storageDeviceSets: []

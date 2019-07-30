@@ -616,7 +616,7 @@ func GetRookCephCRDs() []*extv1beta1.CustomResourceDefinition {
 				Kind:       "CustomResourceDefinition",
 			},
 			ObjectMeta: metav1.ObjectMeta{
-				Name: "cephclusters.ocs.openshift.io",
+				Name: "cephclusters.ceph.rook.io",
 			},
 			Spec: extv1beta1.CustomResourceDefinitionSpec{
 				Group:   "ceph.rook.io",
@@ -753,7 +753,7 @@ func GetRookCephCRDs() []*extv1beta1.CustomResourceDefinition {
 				Kind:       "CustomResourceDefinition",
 			},
 			ObjectMeta: metav1.ObjectMeta{
-				Name: "cephblockpools.ocs.openshift.io",
+				Name: "cephblockpools.ceph.rook.io",
 			},
 			Spec: extv1beta1.CustomResourceDefinitionSpec{
 				Group:   "ceph.rook.io",
@@ -774,7 +774,7 @@ func GetRookCephCRDs() []*extv1beta1.CustomResourceDefinition {
 				Kind:       "CustomResourceDefinition",
 			},
 			ObjectMeta: metav1.ObjectMeta{
-				Name: "cephobjectstores.ocs.openshift.io",
+				Name: "cephobjectstores.ceph.rook.io",
 			},
 			Spec: extv1beta1.CustomResourceDefinitionSpec{
 				Group:   "ceph.rook.io",
@@ -795,7 +795,7 @@ func GetRookCephCRDs() []*extv1beta1.CustomResourceDefinition {
 				Kind:       "CustomResourceDefinition",
 			},
 			ObjectMeta: metav1.ObjectMeta{
-				Name: "cephobjectstoreusers.ocs.openshift.io",
+				Name: "cephobjectstoreusers.ceph.rook.io",
 			},
 			Spec: extv1beta1.CustomResourceDefinitionSpec{
 				Group:   "ceph.rook.io",

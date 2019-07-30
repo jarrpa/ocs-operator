@@ -8,7 +8,7 @@ PROJECT_ROOT="$(readlink -e $(dirname "$BASH_SOURCE[0]")/../)"
 REPLACES_VERSION="${REPLACES_VERSION:-0.0.1}"
 CSV_VERSION="${CSV_VERSION:-0.0.1}"
 
-NAMESPACE="${NAMESPACE:-storageclusters}"
+NAMESPACE="${NAMESPACE:-openshift-storage}"
 DEPLOY_DIR="${PROJECT_ROOT}/deploy"
 CSV_DIR="${DEPLOY_DIR}/olm-catalog/ocs-operator/${CSV_VERSION}"
 

@@ -313,6 +313,9 @@ func GetCR() *ocsv1alpha1.StorageCluster {
 		Spec: ocsv1alpha1.StorageClusterSpec{
 			ManageNodes: false,
 			// TODO: Add an example for StorageDeviceSets
+			StorageDeviceSets: []ocsv1alpha1.StorageDeviceSet {
+
+			},
 		},
 	}
 }

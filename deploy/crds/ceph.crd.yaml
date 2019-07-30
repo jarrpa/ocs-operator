@@ -2,7 +2,7 @@
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-  name: cephclusters.ocs.openshift.io
+  name: cephclusters.ceph.rook.io
 spec:
   additionalPrinterColumns:
   - JSONPath: .spec.dataDirHostPath
