@@ -88,6 +88,8 @@ var validTopologyLabelKeys = []string{
 	"topology.rook.io",
 }
 
+var debug logr.Logger
+
 // Reconcile reads that state of the cluster for a StorageCluster object and makes changes based on the state read
 // and what is in the StorageCluster.Spec
 // Note:
@@ -95,6 +97,7 @@ var validTopologyLabelKeys = []string{
 // Result.Requeue is true, otherwise upon completion it will remove the work from the queue.
 func (r *ReconcileStorageCluster) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	reqLogger := r.reqLogger.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
+	debug = r.reqLogger.WithName("DEBUG")
 
 	// Fetch the StorageCluster instance
 	sc := &ocsv1.StorageCluster{}

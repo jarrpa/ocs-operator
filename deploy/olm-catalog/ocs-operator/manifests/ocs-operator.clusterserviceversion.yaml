@@ -2302,7 +2302,7 @@ spec:
                   value: noobaa/noobaa-core:master-20201130
                 - name: NOOBAA_DB_IMAGE
                   value: centos/mongodb-36-centos7
-                image: quay.io/ocs-dev/ocs-operator:latest
+                image: quay.io/jarrpa/ocs-operator:latest
                 imagePullPolicy: Always
                 name: ocs-operator
                 ports:
@@ -2478,7 +2478,7 @@ spec:
                 - --namespaces=openshift-storage
                 command:
                 - /usr/local/bin/metrics-exporter
-                image: quay.io/ocs-dev/ocs-operator:latest
+                image: quay.io/jarrpa/ocs-operator:latest
                 name: ocs-metrics-exporter
                 ports:
                 - containerPort: 8080
@@ -2808,6 +2808,6 @@ spec:
     name: noobaa-core
   - image: centos/mongodb-36-centos7
     name: noobaa-db
-  - image: quay.io/ocs-dev/ocs-must-gather:latest
+  - image: quay.io/jarrpa/ocs-must-gather:latest
     name: ocs-must-gather
   version: 4.7.0
