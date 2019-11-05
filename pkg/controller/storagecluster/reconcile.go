@@ -188,6 +188,7 @@ func (r *ReconcileStorageCluster) Reconcile(request reconcile.Request) (reconcil
 		r.ensureCephBlockPools,
 		r.ensureCephFilesystems,
 
+		r.ensureCephConfig,
 		r.ensureCephCluster,
 		r.ensureNoobaaSystem,
 	} {
@@ -490,6 +491,12 @@ func determinePlacementRack(nodes *corev1.NodeList, node corev1.Node, minRacks i
 	}
 
 	return rack
+}
+
+// ensureCephConfig ensures that a ConfigMap resource exists with its Spec in
+// the desired state.
+func (r *ReconcileStorageCluster) ensureCephConfig(sc *ocsv1.StorageCluster, reqLogger logr.Logger) error {
+	return nil
 }
 
 // ensureCephCluster ensures that a CephCluster resource exists with its Spec in
