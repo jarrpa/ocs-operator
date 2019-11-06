@@ -15,7 +15,8 @@ spec:
           storage: 10Gi
   storageDeviceSets:
   - name: example-deviceset
-    count: 3
+    count: 1
+    replica: 3
     resources: {}
     placement: {}
     dataPVCTemplate:
