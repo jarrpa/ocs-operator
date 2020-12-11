@@ -200,51 +200,76 @@ for ns in $namespaces; do
 
     oc delete -f pod_helper.yaml
 
-    # Collecting ceph prepare volume logs
-    volume_collection(){
-        NODE_OUTPUT_DIR=${CEPH_COLLECTION_PATH}/volume_collection_${node}
-        mkdir -p "${NODE_OUTPUT_DIR}"
-        printf "collecting prepare volume logs from node %s \n"  "${node}"
-        { oc rsync -n "${ns}" "$(oc get pods -n "${ns}"| grep "${node//./}-debug"| awk '{print $1}')":/host/var/lib/rook/openshift-storage/log "${NODE_OUTPUT_DIR}"; } >> "${BASE_COLLECTION_PATH}"/gather-debug.log 2>&1
-    }
+    node_collection(){
+        echo "ceph collect node ${node}: starting debug pod"
+        { oc debug nodes/"${node}" --to-namespace="${ns}" << CMDS &
+            chroot /host
+            if [ ! -f /tmp/ceph_logs_ready ]; then
+                mkdir /tmp/ceph_logs/
+                cd /tmp/ceph_logs/
+                mkdir rook_logs
+                mkdir system_logs
+                mkdir rook_crashes
 
-    # Collecting kernel level logs
-    kernel_collection(){
-        KERNEL_LOGS=${CEPH_COLLECTION_PATH}/kernel_log_${node}
-        mkdir -p "${KERNEL_LOGS}"
-        printf "collecting kernel logs from %s \n" "${node}"
-        { oc rsync -n "${ns}" "$(oc get pods -n "${ns}"| grep "${node//./}-debug"| awk '{print $1}')":/host/var/log "${KERNEL_LOGS}"; } >> "${BASE_COLLECTION_PATH}"/gather-debug.log 2>&1
-    }
+                journalctl -o verbose >> system_logs/journal.log &
+                dmesg -k >> system_logs/dmesg.log &
+                cp -r /var/lib/rook/openshift-storage/log/* rook_logs/ &
+                cp -r /var/lib/rook/openshift-storage/crash/* rook_crashes/ &
+                wait
 
-    crash_collection(){
-        oc debug nodes/"${node}" --to-namespace="${ns}" -- bash -c "sleep 5m" &
-        printf "debugging node %s \n" "${node}"
-        debug_pod_ready=false
+                touch /tmp/ceph_logs_ready
+            fi
+
+            for i in {0..600..3}; do
+                if [ ! -f /tmp/ceph_logs_ready ] ; then
+                    rm -rf /tmp/ceph_logs
+                    break
+                else
+                    sleep 3
+                fi
+            done
+CMDS
+        }  >> "${BASE_COLLECTION_PATH}"/gather-debug.log 2>&1
+
+        debug_pid=$!
+
+        echo "ceph collect node ${node}: waiting for debug pod" | tee -a "${BASE_COLLECTION_PATH}/gather-debug.log"
+        debug_pod=""
         for i in {0..300..3}; do
-            if [ "$(oc get pods -n openshift-storage | grep "${node//./}-debug" | awk '{print $2}')" == "1/1" ] ; then
-                debug_pod_ready=true
+            pod_status="$(oc get pods -n ${ns} | grep "${node//./}-debug")"
+            if [ "$(echo "${pod_status}" | awk '{print $2}')" == "1/1" ] ; then
+                debug_pod="$(echo "${pod_status}" | awk '{print $1}')"
                 break
-            else
-                sleep 3
-                echo "waiting for the debug pod to be in ready state"
             fi
         done
-        if $debug_pod_ready; then
-            echo "debug pod is ready"
-            volume_collection
-            kernel_collection
-            oc rsync -n "${ns}" "$(oc get pods -n "${ns}"| grep "${node//./}-debug"| awk '{print $1}')":/host/var/lib/rook/openshift-storage/crash/ "${CRASH_OUTPUT_DIR}"
+
+        if [ "${debug_pod}" == "" ]; then
+            echo "ceph collect node ${node}: debug pod didn't come up ready" | tee -a "${BASE_COLLECTION_PATH}/gather-debug.log"
+            kill -9 ${debug_pid}
+            return
         fi
+
+        echo "ceph collect node ${node}: collecting logs and core dumps" | tee -a "${BASE_COLLECTION_PATH}/gather-debug.log"
+        { oc exec -n "${ns}" "${debug_pod}" -- bash -c "for i in {0..300..3}; do if [ -f /host/tmp/ceph_logs_ready ]; then break; else sleep 3; fi; done"; }  >> "${BASE_COLLECTION_PATH}"/gather-debug.log 2>&1
+
+        echo "ceph collect node ${node}: copying logs and core dumps" | tee -a "${BASE_COLLECTION_PATH}/gather-debug.log"
+        { oc rsync --compress=true -n "${ns}" "${debug_pod}:/host/tmp/ceph_logs/" "${NODE_OUTPUT_DIR}/"; } >> "${BASE_COLLECTION_PATH}"/gather-debug.log 2>&1
+
+        echo "ceph collect node ${node}: cleanup" | tee -a "${BASE_COLLECTION_PATH}/gather-debug.log"
+        { oc exec -n "${ns}" "${debug_pod}" -- bash -c "rm /host/tmp/ceph_logs_ready"; } >> "${BASE_COLLECTION_PATH}"/gather-debug.log 2>&1
+
+        wait
+        echo "ceph collect node ${node}: done" | tee -a "${BASE_COLLECTION_PATH}/gather-debug.log"
     }
 
     # creating a counter variable for collecting PID in array
     idx=0
-    # Collecting ceph crash dump
+    # Collecting ceph logs and core dumps
     for node in ${nodes}; do
-        printf "collecting crash and journal logs  from node %s \n"  "${node}" | tee -a  "${BASE_COLLECTION_PATH}"/gather-debug.log
-        CRASH_OUTPUT_DIR=${CEPH_COLLECTION_PATH}/crash_${node}
-        mkdir -p "${CRASH_OUTPUT_DIR}"
-        crash_collection &
+        printf "ceph collect node %s \n"  "${node}" | tee -a  "${BASE_COLLECTION_PATH}"/gather-debug.log
+        NODE_OUTPUT_DIR="${CEPH_COLLECTION_PATH}/node_${node}"
+        mkdir -p "${NODE_OUTPUT_DIR}"
+        node_collection &
         # collecting PID for bg jobs
         pids[${idx}]=$!
         # shellcheck disable=SC2046
@@ -255,5 +280,5 @@ for ns in $namespaces; do
     echo "waiting for ${pids[*]} to terminate"
     wait "${pids[@]}"
 
-    echo "ceph core dump collection completed"
+    echo "ceph logs and core dumps collection completed"
 done
