@@ -600,7 +600,7 @@ func generateUnifiedCSV() *csvv1.ClusterServiceVersion {
 
 	// Set Provider
 	ocsCSV.Spec.Provider = csvv1.AppLink{
-		Name: "Red Hat",
+		Name: "Red Hat, Inc.",
 	}
 
 	// Set Description
