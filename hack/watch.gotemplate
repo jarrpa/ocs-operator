@@ -1,0 +1,29 @@
+{{ printf "%-11s %s\n" "PHASE" "NAME" -}}
+{{- range .items -}}
+{{- printf "%-11s %.100s" (or .status.phase .status.state) (print .kind "/" .metadata.name) -}}
+{{- if eq .kind "StorageClassRequest" -}}
+  {{- range .status.cephResources -}}
+    {{- if ne .kind "CephClient" -}}
+    {{- printf "\n              %s/%.70s" .kind .name -}}
+    {{- range $type, $name := .cephClients -}}
+      {{- printf "\n                CephClient/%s  type: %s" $name $type -}}
+    {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- else if eq .kind "StorageConsumer" -}}
+  {{/* printf "\n  uid: %s" .metadata.uid */}}
+{{- else if eq .kind "CephCluster" -}}
+  {{- printf "  %s: %s" .status.ceph.health .status.message -}}
+{{- else if eq .kind "CephClient" -}}
+  {{- $type := "" -}}
+  {{- $request := "" -}}
+  {{- range $annotation, $value := .metadata.annotations -}}
+    {{- if eq $annotation "ocs.openshift.io.cephusertype" }}{{ $type = $value }}{{ end -}}
+    {{- if eq $annotation "ocs.openshift.io.storagerequest" }}{{ $request = $value }}{{ end -}}
+  {{- end -}}
+  {{- printf "  req: %-7s type: %s" $request $type -}}
+{{- else if and (eq .kind "StorageCluster") .status.storageProviderEndpoint -}}
+  {{- printf "provider: %s" .status.storageProviderEndpoint -}}
+{{- end -}}
+{{- println "" -}}
+{{- end}}

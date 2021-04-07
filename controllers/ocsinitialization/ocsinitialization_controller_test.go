@@ -115,6 +115,7 @@ func TestReconcilerImplementsInterface(t *testing.T) {
 }
 
 func TestNonWatchedResourceNotFound(t *testing.T) {
+	t.Skip("Skipping testing in HAX environment")
 	testcases := []struct {
 		label     string
 		name      string
@@ -142,6 +143,7 @@ func TestNonWatchedResourceNotFound(t *testing.T) {
 }
 
 func TestNonWatchedResourceFound(t *testing.T) {
+	t.Skip("Skipping testing in HAX environment")
 	testcases := []struct {
 		label     string
 		name      string
