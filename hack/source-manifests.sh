@@ -69,8 +69,7 @@ function gen_ocs_csv() {
 	pushd config/manager
 	$KUSTOMIZE edit set image controller="$OCS_IMAGE"
 	popd
-	OPERATOR_NAMEPREFIX="ocs-operator-"
-	$KUSTOMIZE build config/manifests/ocs-operator | $OPERATOR_SDK generate bundle -q --overwrite=false --output-dir deploy/ocs-operator --kustomize-dir config/manifests/ocs-operator --package ocs-operator --version "$CSV_VERSION" --extra-service-accounts="${OPERATOR_NAMEPREFIX}metrics-exporter"
+	$KUSTOMIZE build config/manifests/ocs-operator | $OPERATOR_SDK generate bundle -q --overwrite=false --output-dir deploy/ocs-operator --kustomize-dir config/manifests/ocs-operator --package ocs-operator --version "$CSV_VERSION" --channels "${OCS_SUBSCRIPTION_CHANNEL}" --default-channel "${OCS_SUBSCRIPTION_CHANNEL}" --extra-service-accounts="${OPERATOR_NAMEPREFIX}metrics-exporter"
 	mv deploy/ocs-operator/manifests/*clusterserviceversion.yaml $OCS_CSV
 	cp config/crd/bases/* $ocs_crds_outdir
 }

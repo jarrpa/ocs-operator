@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  generateName: example-pvc-rbd
+  name: example-pvc-rbd
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: example-storagecluster-ceph-rbd
+  volumeMode: Filesystem

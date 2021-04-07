@@ -1,0 +1,301 @@
+apiVersion: v1
+items:
+- apiVersion: ceph.rook.io/v1
+  kind: CephCluster
+  metadata:
+    creationTimestamp: "2022-07-14T14:33:51Z"
+    finalizers:
+    - cephcluster.ceph.rook.io
+    generation: 1
+    labels:
+      app: ocs-storagecluster
+    name: ocs-storagecluster-cephcluster
+    namespace: {{NAMESPACE}}
+    ownerReferences:
+    - apiVersion: ocs.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: StorageCluster
+      name: ocs-storagecluster
+      uid: 426dd490-b41f-43f4-afff-7424cbaddd66
+    resourceVersion: "47613"
+    uid: 8a02830e-f4c0-4fb5-8e53-6fb484ed512e
+  spec:
+    cephVersion:
+      allowUnsupported: true
+      image: quay.io/ceph/ceph:v16
+    cleanupPolicy:
+      sanitizeDisks: {}
+    continueUpgradeAfterChecksEvenIfNotHealthy: true
+    crashCollector: {}
+    dashboard: {}
+    dataDirHostPath: /var/lib/rook
+    disruptionManagement:
+      machineDisruptionBudgetNamespace: openshift-machine-api
+      managePodBudgets: true
+    external: {}
+    healthCheck:
+      daemonHealth:
+        mon: {}
+        osd: {}
+        status: {}
+    labels:
+      monitoring:
+        rook.io/managedBy: ocs-storagecluster
+    logCollector:
+      enabled: true
+      periodicity: 24h
+    mgr:
+      modules:
+      - enabled: true
+        name: pg_autoscaler
+      - enabled: true
+        name: balancer
+    mon:
+      count: 3
+      volumeClaimTemplate:
+        metadata: {}
+        spec:
+          resources:
+            requests:
+              storage: 50Gi
+          storageClassName: gp2
+        status: {}
+    monitoring:
+      enabled: true
+    network:
+      hostNetwork: true
+    placement:
+      all:
+        tolerations:
+        - effect: NoSchedule
+          key: node.ocs.openshift.io/storage
+          operator: Equal
+          value: "true"
+      arbiter:
+        tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+          operator: Exists
+      mon:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - rook-ceph-mon
+            topologyKey: topology.kubernetes.io/zone
+    priorityClassNames:
+      mgr: system-node-critical
+      mon: system-node-critical
+      osd: system-node-critical
+    resources:
+      mds: {}
+      mgr: {}
+      mon: {}
+      nfs: {}
+      noobaa-core: {}
+      noobaa-db: {}
+      noobaa-endpoint: {}
+      rgw: {}
+    security:
+      kms: {}
+    storage:
+      storageClassDeviceSets:
+      - count: 1
+        name: default-0
+        placement:
+          tolerations:
+          - effect: NoSchedule
+            key: node.ocs.openshift.io/storage
+            operator: Equal
+            value: "true"
+          topologySpreadConstraints:
+          - labelSelector:
+              matchExpressions:
+              - key: ceph.rook.io/pvc
+                operator: Exists
+            maxSkew: 1
+            topologyKey: kubernetes.io/hostname
+            whenUnsatisfiable: ScheduleAnyway
+        portable: true
+        preparePlacement:
+          tolerations:
+          - effect: NoSchedule
+            key: node.ocs.openshift.io/storage
+            operator: Equal
+            value: "true"
+          topologySpreadConstraints:
+          - labelSelector:
+              matchExpressions:
+              - key: ceph.rook.io/pvc
+                operator: Exists
+            maxSkew: 1
+            topologyKey: topology.kubernetes.io/zone
+            whenUnsatisfiable: DoNotSchedule
+          - labelSelector:
+              matchExpressions:
+              - key: ceph.rook.io/pvc
+                operator: Exists
+            maxSkew: 1
+            topologyKey: kubernetes.io/hostname
+            whenUnsatisfiable: ScheduleAnyway
+        resources:
+          limits:
+            cpu: "2"
+            memory: 5Gi
+          requests:
+            cpu: "2"
+            memory: 5Gi
+        tuneDeviceClass: true
+        volumeClaimTemplates:
+        - metadata:
+            annotations:
+              crushDeviceClass: ""
+          spec:
+            accessModes:
+            - ReadWriteOnce
+            resources:
+              requests:
+                storage: 4Ti
+            storageClassName: gp2
+            volumeMode: Block
+          status: {}
+      - count: 1
+        name: default-1
+        placement:
+          tolerations:
+          - effect: NoSchedule
+            key: node.ocs.openshift.io/storage
+            operator: Equal
+            value: "true"
+          topologySpreadConstraints:
+          - labelSelector:
+              matchExpressions:
+              - key: ceph.rook.io/pvc
+                operator: Exists
+            maxSkew: 1
+            topologyKey: kubernetes.io/hostname
+            whenUnsatisfiable: ScheduleAnyway
+        portable: true
+        preparePlacement:
+          tolerations:
+          - effect: NoSchedule
+            key: node.ocs.openshift.io/storage
+            operator: Equal
+            value: "true"
+          topologySpreadConstraints:
+          - labelSelector:
+              matchExpressions:
+              - key: ceph.rook.io/pvc
+                operator: Exists
+            maxSkew: 1
+            topologyKey: topology.kubernetes.io/zone
+            whenUnsatisfiable: DoNotSchedule
+          - labelSelector:
+              matchExpressions:
+              - key: ceph.rook.io/pvc
+                operator: Exists
+            maxSkew: 1
+            topologyKey: kubernetes.io/hostname
+            whenUnsatisfiable: ScheduleAnyway
+        resources:
+          limits:
+            cpu: "2"
+            memory: 5Gi
+          requests:
+            cpu: "2"
+            memory: 5Gi
+        tuneDeviceClass: true
+        volumeClaimTemplates:
+        - metadata:
+            annotations:
+              crushDeviceClass: ""
+          spec:
+            accessModes:
+            - ReadWriteOnce
+            resources:
+              requests:
+                storage: 4Ti
+            storageClassName: gp2
+            volumeMode: Block
+          status: {}
+      - count: 1
+        name: default-2
+        placement:
+          tolerations:
+          - effect: NoSchedule
+            key: node.ocs.openshift.io/storage
+            operator: Equal
+            value: "true"
+          topologySpreadConstraints:
+          - labelSelector:
+              matchExpressions:
+              - key: ceph.rook.io/pvc
+                operator: Exists
+            maxSkew: 1
+            topologyKey: kubernetes.io/hostname
+            whenUnsatisfiable: ScheduleAnyway
+        portable: true
+        preparePlacement:
+          tolerations:
+          - effect: NoSchedule
+            key: node.ocs.openshift.io/storage
+            operator: Equal
+            value: "true"
+          topologySpreadConstraints:
+          - labelSelector:
+              matchExpressions:
+              - key: ceph.rook.io/pvc
+                operator: Exists
+            maxSkew: 1
+            topologyKey: topology.kubernetes.io/zone
+            whenUnsatisfiable: DoNotSchedule
+          - labelSelector:
+              matchExpressions:
+              - key: ceph.rook.io/pvc
+                operator: Exists
+            maxSkew: 1
+            topologyKey: kubernetes.io/hostname
+            whenUnsatisfiable: ScheduleAnyway
+        resources:
+          limits:
+            cpu: "2"
+            memory: 5Gi
+          requests:
+            cpu: "2"
+            memory: 5Gi
+        tuneDeviceClass: true
+        volumeClaimTemplates:
+        - metadata:
+            annotations:
+              crushDeviceClass: ""
+          spec:
+            accessModes:
+            - ReadWriteOnce
+            resources:
+              requests:
+                storage: 4Ti
+            storageClassName: gp2
+            volumeMode: Block
+          status: {}
+  status:
+    conditions:
+    - lastHeartbeatTime: "2022-07-14T14:35:22Z"
+      lastTransitionTime: "2022-07-14T14:35:22Z"
+      message: Configuring Ceph Mons
+      reason: ClusterProgressing
+      status: "True"
+      type: Progressing
+    message: Configuring Ceph Mons
+    phase: Progressing
+    state: Creating
+    version:
+      image: quay.io/ceph/ceph:v16
+      version: 16.2.9-0
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

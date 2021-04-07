@@ -375,7 +375,7 @@ func unmarshalCSV(filePath string) *csvv1.ClusterServiceVersion {
 			},
 			{
 				Name:  "ROOK_OBC_WATCH_OPERATOR_NAMESPACE",
-				Value: "true",
+				Value: "false",
 			},
 		}
 

@@ -1,0 +1,57 @@
+---
+apiVersion: ocs.openshift.io/v1
+kind: StorageCluster
+metadata:
+  annotations:
+    uninstall.ocs.openshift.io/cleanup-policy: delete
+    uninstall.ocs.openshift.io/mode: graceful
+  name: ocs-storagecluster
+  namespace: {{NAMESPACE}}
+spec:
+  allowRemoteStorageConsumers: true
+  hostNetwork: true
+  labelSelector: {}
+  managedResources: {}
+  mirroring: {}
+  multiCloudGateway:
+    reconcileStrategy: ignore
+  defaultStorageProfile: "medium"
+  storageProfiles:
+    - name: medium
+      deviceClass: medium
+  backingStorageClasses:
+    - metadata:
+        name: medium-performance
+      provisioner: ebs.csi.aws.com
+      parameters:
+        type: gp3-csi
+        iops: "6000"
+  resources:
+    mds: {}
+    mgr: {}
+    mon: {}
+    nfs: {}
+    noobaa-core: {}
+    noobaa-db: {}
+    noobaa-endpoint: {}
+    rgw: {}
+  storageDeviceSets:
+  - config: {}
+    count: 1
+    deviceClass: medium
+    dataPVCTemplate:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 4Ti
+        storageClassName: gp3-csi
+        volumeMode: Block
+      status: {}
+    name: default
+    placement: {}
+    portable: true
+    preparePlacement: {}
+    replica: 3
+    resources: {}

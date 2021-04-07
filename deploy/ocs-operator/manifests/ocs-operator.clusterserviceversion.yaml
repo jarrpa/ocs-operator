@@ -56,7 +56,7 @@ metadata:
       ]
     capabilities: Deep Insights
     categories: Storage
-    containerImage: quay.io/ocs-dev/ocs-operator:latest
+    containerImage: quay.io/jarrpa/ocs-operator:latest
     description: Red Hat OpenShift Container Storage provides hyperconverged storage
       for applications within an OpenShift cluster.
     external.features.ocs.openshift.io/export-script: |-
@@ -3087,12 +3087,12 @@ spec:
                 - name: NOOBAA_DB_IMAGE
                   value: docker.io/centos/postgresql-12-centos8
                 - name: PROVIDER_API_SERVER_IMAGE
-                  value: quay.io/ocs-dev/ocs-operator:latest
+                  value: quay.io/jarrpa/ocs-operator:latest
                 - name: OPERATOR_NAMESPACE
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.namespace
-                image: quay.io/ocs-dev/ocs-operator:latest
+                image: quay.io/jarrpa/ocs-operator:latest
                 imagePullPolicy: Always
                 name: ocs-operator
                 readinessProbe:
@@ -3247,7 +3247,7 @@ spec:
                     fieldRef:
                       fieldPath: metadata.namespace
                 - name: ROOK_OBC_WATCH_OPERATOR_NAMESPACE
-                  value: "true"
+                  value: "false"
                 image: docker.io/rook/ceph:v1.12.7-31.g997289bec
                 name: rook-ceph-operator
                 ports:
@@ -3304,7 +3304,7 @@ spec:
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.namespace
-                image: quay.io/ocs-dev/ocs-metrics-exporter:latest
+                image: quay.io/jarrpa/ocs-metrics-exporter:latest
                 name: ocs-metrics-exporter
                 ports:
                 - containerPort: 8080
@@ -3664,8 +3664,8 @@ spec:
     name: ceph-container
   - image: quay.io/csiaddons/k8s-sidecar:v0.6.0
     name: csiaddons-sidecar
-  - image: quay.io/ocs-dev/ocs-must-gather:latest
+  - image: quay.io/jarrpa/ocs-must-gather:latest
     name: ocs-must-gather
-  - image: quay.io/ocs-dev/ocs-metrics-exporter:latest
+  - image: quay.io/jarrpa/ocs-metrics-exporter:latest
     name: ocs-metrics-exporter
   version: 4.15.0
