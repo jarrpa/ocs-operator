@@ -23,7 +23,7 @@ import (
 const InstallNamespace = "openshift-storage"
 
 // DefaultStorageClusterName is the name of the storage cluster the test suite installs
-const DefaultStorageClusterName = "test-storagecluster"
+const DefaultStorageClusterName = "ocs-storagecluster"
 
 // DefaultStorageClassRBD is the name of the ceph rbd storage class the test suite installs
 const DefaultStorageClassRBD = DefaultStorageClusterName + "-ceph-rbd"
