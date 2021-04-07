@@ -8,6 +8,7 @@ import (
 
 	conditionsv1 "github.com/openshift/custom-resource-status/conditions/v1"
 	ocsv1 "github.com/red-hat-storage/ocs-operator/api/v1"
+	rook "github.com/rook/rook/pkg/apis/ceph.rook.io/v1"
 	corev1 "k8s.io/api/core/v1"
 	k8sv1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -53,6 +54,13 @@ func (t *DeployManager) StartDefaultStorageCluster() error {
 	return nil
 }
 
+const (
+	ProviderOSDSizeInTiB = 4
+)
+
+var gp2 = "gp2"
+var volumeModeBlock = corev1.PersistentVolumeBlock
+
 // DefaultStorageCluster returns a default StorageCluster manifest
 func (t *DeployManager) DefaultStorageCluster() (*ocsv1.StorageCluster, error) {
 	arbiter := ocsv1.ArbiterSpec{}
@@ -62,16 +70,19 @@ func (t *DeployManager) DefaultStorageCluster() (*ocsv1.StorageCluster, error) {
 		nodeTopologies.ArbiterLocation = t.GetArbiterZone()
 	}
 
-	monQuantity, err := resource.ParseQuantity("10Gi")
-	if err != nil {
-		return nil, err
-	}
-	dataQuantity, err := resource.ParseQuantity("100Gi")
-	if err != nil {
-		return nil, err
-	}
-	storageClassName := "gp2-csi"
-	blockVolumeMode := k8sv1.PersistentVolumeBlock
+	/*
+		monQuantity, err := resource.ParseQuantity("10Gi")
+		if err != nil {
+			return nil, err
+		}
+		dataQuantity, err := resource.ParseQuantity("100Gi")
+		if err != nil {
+			return nil, err
+		}
+		storageClassName := "gp2-csi"
+		blockVolumeMode := k8sv1.PersistentVolumeBlock
+	*/
+
 	storageCluster := &ocsv1.StorageCluster{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      DefaultStorageClusterName,
@@ -79,21 +90,6 @@ func (t *DeployManager) DefaultStorageCluster() (*ocsv1.StorageCluster, error) {
 		},
 		Spec: ocsv1.StorageClusterSpec{
 			ManageNodes: false,
-			MonPVCTemplate: &k8sv1.PersistentVolumeClaim{
-				Spec: k8sv1.PersistentVolumeClaimSpec{
-					StorageClassName: &storageClassName,
-					AccessModes:      []k8sv1.PersistentVolumeAccessMode{k8sv1.ReadWriteOnce},
-
-					Resources: k8sv1.ResourceRequirements{
-						Requests: k8sv1.ResourceList{
-							"storage": monQuantity,
-						},
-					},
-				},
-			},
-			NFS: &ocsv1.NFSSpec{
-				Enable: true,
-			},
 			// Setting empty ResourceLists to prevent ocs-operator from setting the
 			// default resource requirements
 			Resources: map[string]corev1.ResourceRequirements{
@@ -130,38 +126,47 @@ func (t *DeployManager) DefaultStorageCluster() (*ocsv1.StorageCluster, error) {
 					Limits:   corev1.ResourceList{},
 				},
 			},
-			StorageDeviceSets: []ocsv1.StorageDeviceSet{
-				{
-					Name:     "example-deviceset",
-					Count:    1,
-					Replica:  t.getMinOSDsCount(),
-					Portable: true,
-					Resources: corev1.ResourceRequirements{
-						Requests: corev1.ResourceList{
-							corev1.ResourceMemory: resource.MustParse("1Gi"),
+			StorageDeviceSets: []ocsv1.StorageDeviceSet{{
+				Name:  "default",
+				Count: 1,
+				DataPVCTemplate: corev1.PersistentVolumeClaim{
+					Spec: corev1.PersistentVolumeClaimSpec{
+						StorageClassName: &gp2,
+						AccessModes: []corev1.PersistentVolumeAccessMode{
+							corev1.ReadWriteOnce,
 						},
-					},
-
-					DataPVCTemplate: k8sv1.PersistentVolumeClaim{
-						ObjectMeta: metav1.ObjectMeta{
-							Name: "data",
-						},
-						Spec: k8sv1.PersistentVolumeClaimSpec{
-							StorageClassName: &storageClassName,
-							AccessModes:      []k8sv1.PersistentVolumeAccessMode{k8sv1.ReadWriteOnce},
-							VolumeMode:       &blockVolumeMode,
-
-							Resources: k8sv1.ResourceRequirements{
-								Requests: k8sv1.ResourceList{
-									"storage": dataQuantity,
-								},
+						VolumeMode: &volumeModeBlock,
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								"storage": resource.MustParse(fmt.Sprintf("%dTi", ProviderOSDSizeInTiB)),
 							},
 						},
 					},
 				},
+				Placement: rook.Placement{},
+				Portable:  true,
+				Replica:   3,
+				Resources: corev1.ResourceRequirements{
+					Requests: corev1.ResourceList{},
+					Limits:   corev1.ResourceList{},
+				},
+			}},
+			MultiCloudGateway: &ocsv1.MultiCloudGatewaySpec{
+				ReconcileStrategy: "ignore",
 			},
-			NodeTopologies: nodeTopologies,
-			Arbiter:        arbiter,
+			HostNetwork:                 true,
+			AllowRemoteStorageConsumers: true,
+			ManagedResources: ocsv1.ManagedResourcesSpec{
+				CephBlockPools: ocsv1.ManageCephBlockPools{
+					ReconcileStrategy:    "ignore",
+					DisableStorageClass:  true,
+					DisableSnapshotClass: true,
+				},
+				CephFilesystems: ocsv1.ManageCephFilesystems{
+					DisableStorageClass:  true,
+					DisableSnapshotClass: true,
+				},
+			},
 		},
 	}
 	storageCluster.SetGroupVersionKind(schema.GroupVersionKind{Group: ocsv1.GroupVersion.Group, Kind: "StorageCluster", Version: ocsv1.GroupVersion.Version})

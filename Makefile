@@ -1,3 +1,13 @@
+include hack/jarrpa.mk
+
+# Setting SHELL to bash allows bash commands to be executed by recipes.
+# Options are set to exit when a recipe line exits non-zero or a piped command fails.
+SHELL = /usr/bin/env bash -o pipefail
+.SHELLFLAGS = -ec
+
+.DEFAULT_GOAL := help
+.EXPORT_ALL_VARIABLES:
+
 # Export GO111MODULE=on to enable project to be built from within GOPATH/src
 export GO111MODULE=on
 # Enable GOPROXY. This speeds up a lot of vendoring operations.
@@ -48,6 +58,24 @@ all: ocs-operator ocs-registry ocs-must-gather
 	red-hat-storage-ocs-ci \
 	unit-test \
 	deps-update
+
+##@ General
+
+# The help target prints out all targets with their descriptions organized
+# beneath their categories. The categories are represented by '##@' and the
+# target descriptions by '##'. The awk commands is responsible for reading the
+# entire set of makefiles included in this invocation, looking for lines of the
+# file as xyz: ## something, and then pretty-format the target and help. Then,
+# if there's a line with ##@ something, that gets pretty-printed as a category.
+# More info on the usage of ANSI control characters for terminal formatting:
+# https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_parameters
+# More info on the awk command:
+# http://linuxcommand.org/lc3_adv_awk.php
+
+help: ## Display this help.
+	@./hack/make-help.sh $(MAKEFILE_LIST)
+
+##@ Development
 
 deps-update:
 	@echo "Running deps-update"
@@ -138,7 +166,7 @@ clean:
 	@echo "cleaning previous outputs"
 	hack/clean.sh
 
-cluster-deploy: cluster-clean
+cluster-deploy: #cluster-clean
 	@echo "Deploying ocs to cluster"
 	hack/cluster-deploy.sh
 

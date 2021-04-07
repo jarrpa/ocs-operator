@@ -1,0 +1,60 @@
+{
+    "IpPermissions": [
+        {
+            "FromPort": 31659,
+            "ToPort": 31659,
+            "IpProtocol": "tcp",
+            "IpRanges": [
+                {
+                    "CidrIp": "10.0.0.0/16",
+                    "Description": "Provider API"
+                }
+            ]
+        },
+        {
+            "FromPort": 9283,
+            "ToPort": 9283,
+            "IpProtocol": "tcp",
+            "IpRanges": [
+                {
+                    "CidrIp": "10.0.0.0/16",
+                    "Description": "Ceph MGR"
+                }
+            ]
+        },
+        {
+            "FromPort": 6789,
+            "ToPort": 6789,
+            "IpProtocol": "tcp",
+            "IpRanges": [
+                {
+                    "CidrIp": "10.0.0.0/16",
+                    "Description": "Ceph MON v1"
+                }
+            ]
+        },
+        {
+            "FromPort": 3300,
+            "ToPort": 3300,
+            "IpProtocol": "tcp",
+            "IpRanges": [
+                {
+                    "CidrIp": "10.0.0.0/16",
+                    "Description": "Ceph MON v2"
+                }
+            ]
+        },
+        {
+            "FromPort": 6800,
+            "ToPort": 7300,
+            "IpProtocol": "tcp",
+            "IpRanges": [
+                {
+                    "CidrIp": "10.0.0.0/16",
+                    "Description": "Ceph OSD"
+                }
+            ]
+        }
+    ]
+}
+
