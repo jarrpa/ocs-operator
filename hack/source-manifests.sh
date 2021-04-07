@@ -89,7 +89,7 @@ function gen_ocs_csv() {
 	pushd config/manager
 	$KUSTOMIZE edit set image ocs-dev/ocs-operator="$OCS_IMAGE"
 	popd
-	$KUSTOMIZE build config/manifests | $OPERATOR_SDK generate bundle -q --overwrite=false --version "$CSV_VERSION"
+	$KUSTOMIZE build config/manifests | $OPERATOR_SDK generate bundle -q --overwrite=false --version "$CSV_VERSION" --channels stable-4.8 --default-channel stable-4.8
 	mv bundle/manifests/*clusterserviceversion.yaml $OCS_CSV
 	cp config/crd/bases/* $ocs_crds_outdir
 }

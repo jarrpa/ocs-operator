@@ -13,7 +13,7 @@ endif
 
 KUSTOMIZE_VERSION=v4.5.2
 CONTROLLER_GEN_VERSION=v0.8.0
-CRD_OPTIONS ?= "crd:trivialVersions=true"
+CRD_OPTIONS ?= "crd"
 
 all: ocs-operator ocs-registry ocs-must-gather
 

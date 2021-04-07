@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-storage
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: openshift-storage-operatorgroup
+  namespace: openshift-storage
+spec:
+  targetNamespaces:
+  - openshift-storage
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: odf-catalogsource
+  namespace: openshift-storage
+spec:
+  displayName: OpenShift Data Foundation
+  image: quay.io/jarrpa/odf-operator-catalog:latest
+  publisher: Red Hat
+  sourceType: grpc
