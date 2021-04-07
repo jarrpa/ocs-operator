@@ -1,0 +1,59 @@
+---
+apiVersion: ceph.rook.io/v1
+kind: CephClient
+metadata:
+  annotations:
+    ocs.openshift.io.cephusertype: provisioner
+    ocs.openshift.io.storagerequest: rbd
+  name: 7e77a41fc8558703c26025ab061cf974
+  namespace: ocs-operator-system
+spec:
+  caps:
+    mgr: allow rw
+    mon: profile rbd
+    osd: profile rbd pool=example-storagecluster-cephblockpool
+---
+apiVersion: ceph.rook.io/v1
+kind: CephClient
+metadata:
+  annotations:
+    ocs.openshift.io.cephusertype: node
+    ocs.openshift.io.storagerequest: rbd
+  name: 71eb44e531e84713b4c92f00174de7fc
+  namespace: ocs-operator-system
+spec:
+  caps:
+    mgr: allow rw
+    mon: profile rbd
+    osd: profile rbd pool=example-storagecluster-cephblockpool
+---
+apiVersion: ocs.openshift.io/v1alpha1
+kind: StorageClassRequest
+metadata:
+  labels:
+    ocs.openshift.io/storageclassrequest-name: example-storagecluster-ceph-rbd
+    ocs.openshift.io/storageconsumer-uuid: 18670a11-09c0-40df-a89f-83f5aba83a88
+  name: storageclassrequest-2b071fb496b8deafc68e07479504d40b
+  ownerReferences:
+  - apiVersion: ocs.openshift.io/v1alpha1
+    blockOwnerDeletion: true
+    kind: StorageConsumer
+    name: storageconsumer-49bd4022-516c-4e24-8634-63452870aeb7
+    uid: 18670a11-09c0-40df-a89f-83f5aba83a88
+spec:
+  type: blockpool
+status:
+  cephResources:
+  - kind: CephClient
+    name: 7e77a41fc8558703c26025ab061cf974
+    status: Ready
+  - kind: CephClient
+    name: 71eb44e531e84713b4c92f00174de7fc
+    status: Ready
+  - cephClients:
+      node: 71eb44e531e84713b4c92f00174de7fc
+      provisioner: 7e77a41fc8558703c26025ab061cf974
+    kind: CephBlockPool
+    name: example-storagecluster-cephblockpool
+    status: Ready
+  phase: Ready

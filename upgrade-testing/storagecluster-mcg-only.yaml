@@ -1,0 +1,22 @@
+---
+apiVersion: ocs.openshift.io/v1
+kind: StorageCluster
+metadata:
+  annotations:
+    uninstall.ocs.openshift.io/cleanup-policy: delete
+    uninstall.ocs.openshift.io/mode: graceful
+  name: ocs-storagecluster
+  namespace: {{NAMESPACE}}
+spec:
+  labelSelector: {}
+  multiCloudGateway:
+    reconcileStrategy: standalone
+  resources:
+    mds: {}
+    mgr: {}
+    mon: {}
+    nfs: {}
+    noobaa-core: {}
+    noobaa-db: {}
+    noobaa-endpoint: {}
+    rgw: {}

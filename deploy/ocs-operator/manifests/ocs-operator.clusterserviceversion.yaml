@@ -56,7 +56,7 @@ metadata:
       ]
     capabilities: Deep Insights
     categories: Storage
-    containerImage: quay.io/ocs-dev/ocs-operator:latest
+    containerImage: quay.io/jarrpa/ocs-operator:latest
     description: Red Hat OpenShift Container Storage provides hyperconverged storage
       for applications within an OpenShift cluster.
     external.features.ocs.openshift.io/supported-platforms: '["BareMetal", "None",
@@ -555,18 +555,24 @@ spec:
           - '*'
         serviceAccountName: ocs-operator-controller-manager
       deployments:
-      - name: ocs-operator-controller-manager
+      - label:
+          app.kubernetes.io/component: operator
+          app.kubernetes.io/name: ocs
+          operator: ocs
+        name: ocs-operator-controller-manager
         spec:
           replicas: 1
           selector:
             matchLabels:
-              name: controller-manager
+              operator: ocs
           strategy:
             type: Recreate
           template:
             metadata:
               labels:
-                name: controller-manager
+                app.kubernetes.io/component: operator
+                app.kubernetes.io/name: ocs
+                operator: ocs
             spec:
               containers:
               - args:
@@ -582,7 +588,7 @@ spec:
                     fieldRef:
                       fieldPath: metadata.annotations['olm.targetNamespaces']
                 - name: OCS_METRICS_EXPORTER_IMAGE
-                  value: quay.io/ocs-dev/ocs-metrics-exporter:latest
+                  value: quay.io/jarrpa/ocs-metrics-exporter:latest
                 - name: ROOK_CEPH_IMAGE
                   value: quay.io/ocs-dev/rook-ceph:latest-downstream
                 - name: CEPH_IMAGE
@@ -592,14 +598,14 @@ spec:
                 - name: NOOBAA_DB_IMAGE
                   value: docker.io/centos/postgresql-12-centos8
                 - name: PROVIDER_API_SERVER_IMAGE
-                  value: quay.io/ocs-dev/ocs-operator:latest
+                  value: quay.io/jarrpa/ocs-operator:latest
                 - name: ONBOARDING_VALIDATION_KEYS_GENERATOR_IMAGE
-                  value: quay.io/ocs-dev/ocs-operator:latest
+                  value: quay.io/jarrpa/ocs-operator:latest
                 - name: OPERATOR_NAMESPACE
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.namespace
-                image: quay.io/ocs-dev/ocs-operator:latest
+                image: quay.io/jarrpa/ocs-operator:latest
                 imagePullPolicy: Always
                 name: ocs-operator
                 readinessProbe:
@@ -639,7 +645,7 @@ spec:
             matchLabels:
               app: ux-backend-server
               app.kubernetes.io/component: ux-backend-server
-              app.kubernetes.io/name: ux-backend-server
+              app.kubernetes.io/name: ocs
           strategy:
             type: Recreate
           template:
@@ -647,7 +653,7 @@ spec:
               labels:
                 app: ux-backend-server
                 app.kubernetes.io/component: ux-backend-server
-                app.kubernetes.io/name: ux-backend-server
+                app.kubernetes.io/name: ocs
             spec:
               containers:
               - command:
@@ -657,6 +663,10 @@ spec:
                 - name: UX_BACKEND_PORT
                   value: "8888"
                 - name: TLS_ENABLED
+                - name: POD_NAMESPACE
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace
                 image: quay.io/ocs-dev/ocs-operator:latest
                 imagePullPolicy: IfNotPresent
                 name: ux-backend-server
@@ -701,7 +711,7 @@ spec:
                 - name: ONBOARDING_TOKEN_LIFETIME
                 - name: UX_BACKEND_PORT
                 - name: TLS_ENABLED
-                image: quay.io/ocs-dev/ocs-operator:latest
+                image: quay.io/jarrpa/ocs-operator:latest
                 imagePullPolicy: IfNotPresent
                 name: ux-backend-server
                 ports:
@@ -820,9 +830,9 @@ spec:
     name: rook-container
   - image: quay.io/ceph/ceph:v18.2.0
     name: ceph-container
-  - image: quay.io/ocs-dev/ocs-must-gather:latest
+  - image: quay.io/jarrpa/ocs-must-gather:latest
     name: ocs-must-gather
-  - image: quay.io/ocs-dev/ocs-metrics-exporter:latest
+  - image: quay.io/jarrpa/ocs-metrics-exporter:latest
     name: ocs-metrics-exporter
   - image: quay.io/openshift/origin-oauth-proxy:4.16.0
     name: ux-backend-oauth-image

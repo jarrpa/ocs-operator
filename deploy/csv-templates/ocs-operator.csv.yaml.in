@@ -546,18 +546,24 @@ spec:
           - '*'
         serviceAccountName: ocs-operator-controller-manager
       deployments:
-      - name: ocs-operator-controller-manager
+      - label:
+          app.kubernetes.io/component: operator
+          app.kubernetes.io/name: ocs
+          operator: ocs
+        name: ocs-operator-controller-manager
         spec:
           replicas: 1
           selector:
             matchLabels:
-              name: controller-manager
+              operator: ocs
           strategy:
             type: Recreate
           template:
             metadata:
               labels:
-                name: controller-manager
+                app.kubernetes.io/component: operator
+                app.kubernetes.io/name: ocs
+                operator: ocs
             spec:
               containers:
               - args:
@@ -572,7 +578,7 @@ spec:
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.annotations['olm.targetNamespaces']
-                image: quay.io/ocs-dev/ocs-operator:latest
+                image: quay.io/jarrpa/ocs-operator:latest
                 imagePullPolicy: Always
                 name: ocs-operator
                 readinessProbe:
@@ -607,7 +613,7 @@ spec:
             matchLabels:
               app: ux-backend-server
               app.kubernetes.io/component: ux-backend-server
-              app.kubernetes.io/name: ux-backend-server
+              app.kubernetes.io/name: ocs
           strategy:
             type: Recreate
           template:
@@ -615,7 +621,7 @@ spec:
               labels:
                 app: ux-backend-server
                 app.kubernetes.io/component: ux-backend-server
-                app.kubernetes.io/name: ux-backend-server
+                app.kubernetes.io/name: ocs
             spec:
               containers:
               - command:
@@ -625,6 +631,10 @@ spec:
                 - name: UX_BACKEND_PORT
                   value: "8888"
                 - name: TLS_ENABLED
+                - name: POD_NAMESPACE
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace
                 image: quay.io/ocs-dev/ocs-operator:latest
                 imagePullPolicy: IfNotPresent
                 name: ux-backend-server
