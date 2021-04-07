@@ -2763,7 +2763,7 @@ spec:
                   value: centos/postgresql-12-centos7
                 - name: PROVIDER_API_SERVER_IMAGE
                   value: quay.io/ocs-dev/ocs-operator:latest
-                image: quay.io/ocs-dev/ocs-operator:latest
+                image: quay.io/jarrpa/ocs-operator:latest
                 imagePullPolicy: Always
                 name: ocs-operator
                 readinessProbe:
@@ -2910,7 +2910,7 @@ spec:
                 - --namespaces=openshift-storage
                 command:
                 - /usr/local/bin/metrics-exporter
-                image: quay.io/ocs-dev/ocs-operator:latest
+                image: quay.io/jarrpa/ocs-operator:latest
                 name: ocs-metrics-exporter
                 ports:
                 - containerPort: 8080
@@ -3200,6 +3200,6 @@ spec:
     name: volume-replication-operator
   - image: quay.io/csiaddons/k8s-sidecar:v0.2.1
     name: csiaddons-sidecar
-  - image: quay.io/ocs-dev/ocs-must-gather:latest
+  - image: quay.io/jarrpa/ocs-must-gather:latest
     name: ocs-must-gather
   version: 4.10.0
