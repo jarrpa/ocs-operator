@@ -2761,12 +2761,12 @@ spec:
                 - name: NOOBAA_DB_IMAGE
                   value: centos/postgresql-12-centos7
                 - name: PROVIDER_API_SERVER_IMAGE
-                  value: quay.io/ocs-dev/ocs-operator:latest
+                  value: quay.io/jarrpa/ocs-operator:latest
                 - name: OPERATOR_NAMESPACE
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.namespace
-                image: quay.io/ocs-dev/ocs-operator:latest
+                image: quay.io/jarrpa/ocs-operator:latest
                 imagePullPolicy: Always
                 name: ocs-operator
                 readinessProbe:
@@ -2932,7 +2932,7 @@ spec:
                 - --namespaces=openshift-storage
                 command:
                 - /usr/local/bin/metrics-exporter
-                image: quay.io/ocs-dev/ocs-metrics-exporter:latest
+                image: quay.io/jarrpa/ocs-metrics-exporter:latest
                 name: ocs-metrics-exporter
                 ports:
                 - containerPort: 8080
@@ -3216,8 +3216,8 @@ spec:
     name: ceph-container
   - image: quay.io/csiaddons/k8s-sidecar:v0.5.0
     name: csiaddons-sidecar
-  - image: quay.io/ocs-dev/ocs-must-gather:latest
+  - image: quay.io/jarrpa/ocs-must-gather:latest
     name: ocs-must-gather
-  - image: quay.io/ocs-dev/ocs-metrics-exporter:latest
+  - image: quay.io/jarrpa/ocs-metrics-exporter:latest
     name: ocs-metrics-exporter
   version: 4.12.0

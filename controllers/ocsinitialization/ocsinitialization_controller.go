@@ -26,7 +26,7 @@ import (
 // watchNamespace is the namespace the operator is watching.
 var watchNamespace string
 
-const wrongNamespacedName = "Ignoring this resource. Only one should exist, and this one has the wrong name and/or namespace."
+//const wrongNamespacedName = "Ignoring this resource. Only one should exist, and this one has the wrong name and/or namespace."
 
 const (
 	// This name is predefined by Rook

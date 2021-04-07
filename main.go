@@ -43,6 +43,7 @@ import (
 	controllers "github.com/red-hat-storage/ocs-operator/controllers/storageconsumer"
 	"github.com/red-hat-storage/ocs-operator/controllers/util"
 	cephv1 "github.com/rook/rook/pkg/apis/ceph.rook.io/v1"
+	"go.uber.org/zap/zapcore"
 	clusterv1alpha1 "open-cluster-management.io/api/cluster/v1alpha1"
 
 	corev1 "k8s.io/api/core/v1"
@@ -104,7 +105,11 @@ func main() {
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
 
-	loggerOpts := zap.Options{}
+	loggerOpts := zap.Options{
+		Development: true,
+		Level:       zapcore.DebugLevel,
+		TimeEncoder: zapcore.ISO8601TimeEncoder,
+	}
 	loggerOpts.BindFlags(flag.CommandLine)
 	flag.Parse()
 
