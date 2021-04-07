@@ -1,0 +1,28 @@
+allowVolumeExpansion: true
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    description: Provides RWO Filesystem volumes, and RWO and RWX Block volumes
+    ocs.openshift.io/storageclaim: ocs-storagecluster-ceph-rbd
+  name: ocs-storagecluster-ceph-rbd
+  ownerReferences:
+  - apiVersion: ocs.openshift.io/v1alpha1
+    kind: StorageClaim
+    name: ocs-storagecluster-ceph-rbd
+    uid: e175c333-e459-409c-acdd-6abb1df16213
+parameters:
+  clusterID: migration-target
+  csi.storage.k8s.io/controller-expand-secret-name: rook-ceph-client-11395df4377f8aa4ca02507533db8799
+  csi.storage.k8s.io/controller-expand-secret-namespace: ocs-operator-system
+  csi.storage.k8s.io/fstype: ext4
+  csi.storage.k8s.io/node-stage-secret-name: rook-ceph-client-2df50c70944589affd83ceef2a88bed0
+  csi.storage.k8s.io/node-stage-secret-namespace: ocs-operator-system
+  csi.storage.k8s.io/provisioner-secret-name: rook-ceph-client-11395df4377f8aa4ca02507533db8799
+  csi.storage.k8s.io/provisioner-secret-namespace: ocs-operator-system
+  imageFeatures: layering,deep-flatten,exclusive-lock,object-map,fast-diff
+  imageFormat: "2"
+  pool: example-storagecluster-cephblockpool
+provisioner: openshift-storage.rbd.csi.ceph.com
+reclaimPolicy: Delete
+volumeBindingMode: Immediate

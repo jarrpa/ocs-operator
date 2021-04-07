@@ -1,0 +1,57 @@
+apiVersion: ocs.openshift.io/v1
+kind: StorageCluster
+metadata:
+  name: ocs-storagecluster
+spec:
+  allowRemoteStorageConsumers: true
+  enableCephTools: true
+  labelSelector: {}
+  manageNodes: false
+  managedResources:
+    cephBlockPools:
+      disableSnapshotClass: true
+      disableStorageClass: true
+    cephFilesystems:
+      disableSnapshotClass: true
+      disableStorageClass: true
+  monPVCTemplate:
+    spec:
+      storageClassName: lvms-vg1
+      resources:
+        requests:
+          storage: 2Gi
+  multiCloudGateway:
+    reconcileStrategy: ignore
+  network:
+    connections:
+      encryption:
+        enabled: true
+      requireMsgr2: true
+  resources:
+    mds: {}
+    mgr: {}
+    mon: {}
+    nfs: {}
+    noobaa-core: {}
+    noobaa-db: {}
+    noobaa-endpoint: {}
+    osd: {}
+    rgw: {}
+  defaultStorageProfile: "medium"
+  storageDeviceSets:
+  - name: example-deviceset
+    count: 3
+    replica: 1
+    resources: {}
+    placement: {}
+    deviceClass: ssd
+    dataPVCTemplate:
+      spec:
+        storageClassName: lvms-vg1
+        accessModes:
+        - ReadWriteOnce
+        volumeMode: Block
+        resources:
+          requests:
+            storage: 1Gi
+    portable: true

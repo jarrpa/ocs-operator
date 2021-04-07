@@ -1,0 +1,38 @@
+[
+  {
+    "clusterID": "fe09c94a50c72d033da43478c21b8314",
+    "storageClientID": "22929df9-3b87-40c2-b200-46953e1c826e",
+    "monitors": [
+      "172.30.177.147:3300",
+      "172.30.121.44:3300",
+      "172.30.168.227:3300"
+    ],
+    "cephFS": {
+      "subvolumeGroup": "cephfilesystemsubvolumegroup-527d895e2727b0668d689aa765b015b3"
+    }
+  },
+  {
+    "clusterID": "migration-target",
+    "storageClientID": "22929df9-3b87-40c2-b200-46953e1c826e",
+    "monitors": [
+      "172.30.177.147:3300",
+      "172.30.121.44:3300",
+      "172.30.168.227:3300"
+    ],
+    "rbd": {
+      "radosNamespace": "cephradosnamespace-target"
+    }
+  },
+  {
+    "clusterID": "81fd58def37a35d1b4d4bee7ba35c3c3",
+    "storageClientID": "22929df9-3b87-40c2-b200-46953e1c826e",
+    "monitors": [
+      "172.30.177.147:3300",
+      "172.30.121.44:3300",
+      "172.30.168.227:3300"
+    ],
+    "rbd": {
+      "radosNamespace": "cephradosnamespace-5e984c8b2ebd39a6049123dfe78a5bdd"
+    }
+  }
+]

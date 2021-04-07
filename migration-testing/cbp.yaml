@@ -1,0 +1,19 @@
+apiVersion: ceph.rook.io/v1
+kind: CephBlockPool
+metadata:
+  name: stupid-cephblockpool
+spec:
+  application: ""
+  enableRBDStats: true
+  erasureCoded:
+    codingChunks: 0
+    dataChunks: 0
+  failureDomain: osd
+  mirroring: {}
+  quotas: {}
+  replicated:
+    replicasPerFailureDomain: 1
+    size: 3
+    targetSizeRatio: 0.49
+  statusCheck:
+    mirror: {}

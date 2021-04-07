@@ -1,0 +1,9 @@
+apiVersion: ceph.rook.io/v1
+kind: CephFilesystemSubVolumeGroup
+metadata:
+  labels:
+    cephfilesystem.datapool.name: example-storagecluster-cephfilesystem-data0
+  name: csi
+  namespace: ocs-operator-system
+spec:
+  filesystemName: example-storagecluster-cephfilesystem

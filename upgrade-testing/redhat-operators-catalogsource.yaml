@@ -1,0 +1,37 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  annotations:
+    operatorframework.io/managed-by: marketplace-operator
+    operatorframework.io/priorityclass: system-cluster-critical
+    target.workload.openshift.io/management: '{"effect": "PreferredDuringScheduling"}'
+  creationTimestamp: "2021-09-14T10:09:05Z"
+  generation: 1
+  name: redhat-operators
+  namespace: openshift-marketplace
+  resourceVersion: "848343"
+  uid: 4850faf0-c304-4015-86f5-09e45d3720b8
+spec:
+  displayName: Red Hat Operators
+  icon:
+    base64data: ""
+    mediatype: ""
+  image: registry.redhat.io/redhat/redhat-operator-index:v4.8
+  priority: -100
+  publisher: Red Hat
+  sourceType: grpc
+  updateStrategy:
+    registryPoll:
+      interval: 10m0s
+status:
+  connectionState:
+    address: redhat-operators.openshift-marketplace.svc:50051
+    lastConnect: "2021-09-14T19:02:10Z"
+    lastObservedState: READY
+  latestImageRegistryPoll: "2021-09-14T18:52:21Z"
+  registryService:
+    createdAt: "2021-09-14T10:09:05Z"
+    port: "50051"
+    protocol: grpc
+    serviceName: redhat-operators
+    serviceNamespace: openshift-marketplace

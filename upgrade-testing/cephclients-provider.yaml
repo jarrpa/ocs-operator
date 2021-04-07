@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: List
+items:
+- apiVersion: ceph.rook.io/v1
+  kind: CephClient
+  metadata:
+    annotations:
+      ocs.openshift.io.cephusertype: provisioner
+      ocs.openshift.io.storagerequest: rbd
+    name: 04e455c2d8a824af3e6cd1ba7336bf65
+    namespace: ocs-operator-system
+  spec:
+    caps:
+      mgr: allow rw
+      mon: profile rbd
+      osd: profile rbd pool=example-storagecluster-cephblockpool
+- apiVersion: ceph.rook.io/v1
+  kind: CephClient
+  metadata:
+    annotations:
+      ocs.openshift.io.cephusertype: node
+      ocs.openshift.io.storagerequest: rbd
+    name: 2eac4974e6c5081612e2c39895ec376e
+    namespace: ocs-operator-system
+  spec:
+    caps:
+      mgr: allow rw
+      mon: profile rbd
+      osd: profile rbd pool=example-storagecluster-cephblockpool

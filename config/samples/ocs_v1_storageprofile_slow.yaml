@@ -1,0 +1,9 @@
+apiVersion: ocs.openshift.io/v1
+kind: StorageProfile
+metadata:
+  name: slow
+spec:
+  deviceClass: ssd
+  blockPoolConfiguration:
+    parameters:
+      "pg_autoscale_mode": "on"

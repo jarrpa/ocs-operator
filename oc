@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# shellcheck disable=SC2068
+make oc ARGS="$*"

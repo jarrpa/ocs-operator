@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/provisioned-by: openshift-storage.rbd.csi.ceph.com
+    volume.kubernetes.io/provisioner-deletion-secret-name: rook-ceph-client-11395df4377f8aa4ca02507533db8799
+    volume.kubernetes.io/provisioner-deletion-secret-namespace: ocs-operator-system
+  name: pvc-fcad3f7d-cbc6-4f52-aa64-da67eb5704dc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 100Mi
+  csi:
+    controllerExpandSecretRef:
+      name: rook-ceph-client-11395df4377f8aa4ca02507533db8799
+      namespace: ocs-operator-system
+    driver: openshift-storage.rbd.csi.ceph.com
+    fsType: ext4
+    nodeStageSecretRef:
+      name: rook-ceph-client-2df50c70944589affd83ceef2a88bed0
+      namespace: ocs-operator-system
+    volumeAttributes:
+      clusterID: migration-target
+      imageFeatures: layering,deep-flatten,exclusive-lock,object-map,fast-diff
+      imageFormat: "2"
+      journalPool: example-storagecluster-cephblockpool
+      pool: example-storagecluster-cephblockpool
+      radosNamespace: cephradosnamespace-target
+      storage.kubernetes.io/csiProvisionerIdentity: 1711559970761-9022-openshift-storage.rbd.csi.ceph.com
+      staticVolume: "true"
+    volumeHandle: csi-vol-f9b4c628-a70c-418f-b86a-1238e2390d87
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ocs-storagecluster-ceph-rbd
+  volumeMode: Filesystem

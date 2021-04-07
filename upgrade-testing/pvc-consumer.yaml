@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: upgrade-testing
+  generateName: test-medium-0
+  name: test-medium-0-pvc
+  namespace: ocs-client-operator-system
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: storageclassclaim-sample
+  volumeMode: Block

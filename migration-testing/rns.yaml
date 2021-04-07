@@ -1,0 +1,6 @@
+apiVersion: ceph.rook.io/v1
+kind: CephBlockPoolRadosNamespace
+metadata:
+  name: cephradosnamespace-target
+spec:
+  blockPoolName: example-storagecluster-cephblockpool

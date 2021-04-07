@@ -27,10 +27,12 @@ spec:
         args:
         - --enable-leader-election
         - "--health-probe-bind-address=:8081"
-        image: ocs-dev/ocs-operator:latest
+        image: ocs-dev/ocs-operator
         imagePullPolicy: Always
         name: ocs-operator
         env:
+          - name: SINGLE_NODE
+            value: "true"
           - name: WATCH_NAMESPACE
             valueFrom:
               fieldRef:

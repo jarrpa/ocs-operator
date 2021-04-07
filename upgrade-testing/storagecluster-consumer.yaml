@@ -1,0 +1,15 @@
+apiVersion: ocs.openshift.io/v1
+kind: StorageCluster
+metadata:
+ name: ocs-storagecluster-consumer
+ namespace: {{NAMESPACE}}-consumer
+spec:
+ externalStorage:
+   enable: true
+   storageProviderKind: ocs
+   storageProviderEndpoint: ""
+   onboardingTicket: ""
+   requestedCapacity: 1
+ multiCloudGateway:
+   reconcileStrategy: "ignore"
+
