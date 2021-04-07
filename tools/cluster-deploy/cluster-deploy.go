@@ -16,6 +16,7 @@ var (
 )
 
 func main() {
+	var err error
 
 	flag.Parse()
 	if *ocsCatalogSourceImage == "" {
@@ -40,7 +41,7 @@ func main() {
 	}
 
 	log.Printf("Deploying ocs image %s", *ocsCatalogSourceImage)
-	err := t.DeployOCSWithOLM(*ocsCatalogSourceImage, *ocsSubscriptionChannel)
+	//err = t.DeployOCSWithOLM(*ocsCatalogSourceImage, *ocsSubscriptionChannel)
 	if err != nil {
 		panic(err)
 	}
