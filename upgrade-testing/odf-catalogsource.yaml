@@ -1,0 +1,10 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: odf-catalog-source
+  namespace: openshift-marketplace
+spec:
+  displayName: ODF Operators
+  image: quay.io/jarrpa/odf-operator-catalog:channel-test
+  publisher: Red Hat
+  sourceType: grpc

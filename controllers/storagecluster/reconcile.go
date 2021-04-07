@@ -132,6 +132,8 @@ var validTopologyLabelKeys = []string{
 // +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=clusterrolebindings;rolebindings;clusterroles;roles,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=objectbucket.io,resources=objectbuckets;objectbucketclaims,verbs=get;list;watch
 
+//var debug logr.Logger
+
 // Reconcile reads that state of the cluster for a StorageCluster object and makes changes based on the state read
 // and what is in the StorageCluster.Spec
 // Note:
@@ -140,6 +142,7 @@ var validTopologyLabelKeys = []string{
 func (r *StorageClusterReconciler) Reconcile(ctx context.Context, request reconcile.Request) (reconcile.Result, error) {
 
 	prevLogger := r.Log
+	//debug = r.Log.WithName("DEBUG")
 	defer func() { r.Log = prevLogger }()
 	r.Log = r.Log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
 	r.ctx = ctrllog.IntoContext(ctx, r.Log)

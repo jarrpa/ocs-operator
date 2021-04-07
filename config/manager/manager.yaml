@@ -46,7 +46,7 @@ spec:
               fieldRef:
                 fieldPath: metadata.namespace
           - name: OCS_METRICS_EXPORTER_IMAGE
-            value: quay.io/ocs-dev/ocs-metrics-exporter:latest
+            value: quay.io/jarrpa/ocs-metrics-exporter:latest
           - name: ROOK_CEPH_IMAGE
             value: docker.io/rook/ceph:v1.13.5
           - name: CEPH_IMAGE
@@ -58,7 +58,7 @@ spec:
           - name: PROVIDER_API_SERVER_IMAGE
             value: quay.io/jarrpa/ocs-operator:latest
           - name: ONBOARDING_SECRET_GENERATOR_IMAGE
-            value: quay.io/ocs-dev/ocs-operator:latest
+            value: quay.io/jarrpa/ocs-operator:latest
           - name: OPERATOR_NAMESPACE
             valueFrom:
               fieldRef:

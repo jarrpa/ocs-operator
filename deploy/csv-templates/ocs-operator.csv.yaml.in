@@ -22,8 +22,17 @@ metadata:
             "enableCephTools": true,
             "labelSelector": {},
             "manageNodes": false,
+            "managedResources": {},
             "multiCloudGateway": {
               "reconcileStrategy": "ignore"
+            },
+            "network": {
+              "connections": {
+                "encryption": {
+                  "enabled": true
+                },
+                "requireMsgr2": true
+              }
             },
             "resources": {
               "mds": {},
@@ -33,6 +42,7 @@ metadata:
               "noobaa-core": {},
               "noobaa-db": {},
               "noobaa-endpoint": {},
+              "osd": {},
               "rgw": {}
             },
             "storageDeviceSets": [
@@ -519,20 +529,6 @@ spec:
           verbs:
           - '*'
         serviceAccountName: ocs-operator-controller-manager
-      - rules:
-        - apiGroups:
-          - authentication.k8s.io
-          resources:
-          - tokenreviews
-          verbs:
-          - create
-        - apiGroups:
-          - authorization.k8s.io
-          resources:
-          - subjectaccessreviews
-          verbs:
-          - create
-        serviceAccountName: ocs-operator-ux-backend-server
       deployments:
       - name: ocs-operator-controller-manager
         spec:
@@ -560,7 +556,7 @@ spec:
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.annotations['olm.targetNamespaces']
-                image: quay.io/ocs-dev/ocs-operator:latest
+                image: quay.io/jarrpa/ocs-operator:latest
                 imagePullPolicy: Always
                 name: ocs-operator
                 readinessProbe:
@@ -579,6 +575,51 @@ spec:
                 runAsNonRoot: true
               serviceAccountName: ocs-operator-controller-manager
               terminationGracePeriodSeconds: 10
+      - name: ocs-operator-ux-backend-server
+        spec:
+          replicas: 1
+          selector:
+            matchLabels:
+              app: ux-backend-server
+              app.kubernetes.io/component: ux-backend-server
+              app.kubernetes.io/name: ux-backend-server
+          strategy:
+            type: Recreate
+          template:
+            metadata:
+              labels:
+                app: ux-backend-server
+                app.kubernetes.io/component: ux-backend-server
+                app.kubernetes.io/name: ux-backend-server
+            spec:
+              containers:
+              - command:
+                - /usr/local/bin/ux-backend-server
+                env:
+                - name: ONBOARDING_TOKEN_LIFETIME
+                - name: UX_BACKEND_PORT
+                  value: "8888"
+                - name: TLS_ENABLED
+                image: quay.io/jarrpa/ocs-operator:latest
+                imagePullPolicy: IfNotPresent
+                name: ux-backend-server
+                ports:
+                - containerPort: 8888
+                resources: {}
+                volumeMounts:
+                - mountPath: /etc/private-key
+                  name: onboarding-private-key
+              serviceAccountName: ocs-operator-ux-backend-server
+              tolerations:
+              - effect: NoSchedule
+                key: node.ocs.openshift.io/storage
+                operator: Equal
+                value: "true"
+              volumes:
+              - name: onboarding-private-key
+                secret:
+                  optional: true
+                  secretName: onboarding-private-key
       permissions:
       - rules:
         - apiGroups:

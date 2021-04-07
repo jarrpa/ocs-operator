@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: upgrade-testing
+  generateName: consumer-pvc-rbd
+  name: consumer-pvc-rbd
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+  storageClassName: example-storagecluster-ceph-rbd
+  volumeMode: Filesystem
