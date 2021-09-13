@@ -15,29 +15,48 @@ export REGISTRY_NAMESPACE="${REGISTRY_NAMESPACE:-jarrpa}"
 export SKIP_CSV_DUMP="${SKIP_CSV_DUMP}"
 
 help_msg() {
-  echo -e "$0 <cmd>
-  push                Build and push all container images
-  push-op             Build and push operator image
-  push-reg            Build and push registry image
-  push-must-gather    Build and push must-gather image
-  csv                 make gen-latest-csv
-  ci                  make ocs-operator-ci
-  deploy              make cluster-deploy
-  destroy             make cluster-clean
-  oc                  Use custom oc binary
-  functest            make functest
-"
+  cat << USAGE
+Usage:
+  $0 <cmd>
+
+Available Commands:
+USAGE
+
+  funcs=$(declare -F | awk '/-f [^_]/{print $NF}' | sort)
+  for f in $funcs; do
+    awk -v cmd="${f}" '
+      BEGIN {
+        desc=""
+      }
+      /^#\s*/ {
+        while ($0 ~ /^# /) {
+          sub(/^#\s*/, "")
+          desc=desc FS $0
+          getline
+        }
+      }
+      (index($0, cmd) == 1) {
+        printf "  %-20s %s\n", cmd, desc
+        exit
+      }
+      desc=""
+    ' < "$0"
+  done
 }
+
+# Build and push operator image
 push_op() {
   make update-generated
   make ocs-operator
   docker push "quay.io/${REGISTRY_NAMESPACE}/ocs-operator:${IMAGE_TAG}"
 }
 
+# make gen-latest-csv
 csv() {
   make gen-latest-csv
 }
 
+#  aaaaaaa
 push_reg() {
   csv
   make gen-latest-deploy-yaml
@@ -47,39 +66,47 @@ push_reg() {
   docker push "quay.io/${REGISTRY_NAMESPACE}/ocs-registry:${IMAGE_TAG}"
 }
 
+#  
 push_must_gather() {
   make ocs-must-gather
   docker push "quay.io/${REGISTRY_NAMESPACE}/ocs-must-gather:${IMAGE_TAG}"
 }
 
+#  
 push_all() {
   push_op
   push_reg
   push_must_gather
 }
 
+#  
 ci() {
   make ocs-operator-ci
 }
 
+#  
 deploy() {
   make cluster-deploy
 }
 
+#  
 destroy() {
   make cluster-clean
 }
 
+#  
 make_cmd() {
   make "$@"
 }
 
+#  
 opm() {
   source hack/common.sh
   source hack/ensure-opm.sh
   ${OPM} "$@"
 }
 
+#  
 ocp_install()
 {
   # shellcheck disable=SC2115
@@ -90,6 +117,7 @@ ocp_install()
   ${OCP_INSTALLER} create cluster --dir "${OCP_CLUSTER_CONFIG_DIR}" --log-level debug
 }
 
+#  
 clear_recordsets()
 {
   aws route53 list-resource-record-sets --hosted-zone-id Z3URY6TWQ91KVV | \
@@ -98,16 +126,19 @@ clear_recordsets()
   aws route53 change-resource-record-sets --hosted-zone-id Z3URY6TWQ91KVV --change-batch file:///tmp/recordsets.json
 }
 
+#  
 ocp_destroy()
 {
   ${OCP_INSTALLER} destroy cluster --dir "${OCP_CLUSTER_CONFIG_DIR}" || true
   clear_recordsets
 }
 
+#  
 functest() {
   make functest ARGS="-ginkgo.focus=\"$*\"" OCS_CLUSTER_UNINSTALL=false
 }
 
+#  
 oc_dev() {
   # shellcheck disable=SC2068
   ${OCP_OC} "$@"
@@ -119,52 +150,22 @@ if [ "$1" = "-h" ]; then
 fi
 
 case "$1" in
-  push)
-    push_all
-  ;;
-  push-op)
-    push_op
-  ;;
-  push-reg)
-    push_reg
-  ;;
-  push-must-gather)
-    push_must_gather
-  ;;
-  csv)
-    csv
-  ;;
-  ci)
-    ci
-  ;;
-  deploy)
-    deploy
-  ;;
-  destroy)
-    destroy
-  ;;
   make)
     shift
     make_cmd "$@"
-  ;;
-  opm)
-    shift
-    opm "$@"
-  ;;
-  ocp-install)
-    ocp_install
-  ;;
-  ocp-destroy)
-    ocp_destroy
   ;;
   oc)
     shift
     # shellcheck disable=SC2068
     oc_dev "$@"
   ;;
-  functest)
-    shift
-    # shellcheck disable=SC2068
-    functest "$@"
+  *)
+    if [[ $(type -t "${1}") == function ]]; then
+      cmd="${1}"
+      shift
+      ${cmd} "$@"
+    else
+      help_msg
+    fi
   ;;
 esac
