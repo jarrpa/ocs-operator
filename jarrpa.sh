@@ -14,6 +14,8 @@ export REGISTRY_NAMESPACE="${REGISTRY_NAMESPACE:-jarrpa}"
 
 export SKIP_CSV_DUMP="${SKIP_CSV_DUMP}"
 
+export OCS_SUBSCRIPTION_CHANNEL="stable-4.9"
+
 help_msg() {
   cat << USAGE
 Usage:

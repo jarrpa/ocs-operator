@@ -8,5 +8,5 @@ spec:
   channel: stable-4.8
   installPlanApproval: Automatic
   name: ocs-operator
-  source: odf-catalogsource
-  sourceNamespace: openshift-storage
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
