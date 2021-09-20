@@ -11,7 +11,8 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	k8sv1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/api/resource"
+
+	//"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
@@ -62,16 +63,6 @@ func (t *DeployManager) DefaultStorageCluster() (*ocsv1.StorageCluster, error) {
 		nodeTopologies.ArbiterLocation = t.GetArbiterZone()
 	}
 
-	monQuantity, err := resource.ParseQuantity("10Gi")
-	if err != nil {
-		return nil, err
-	}
-	dataQuantity, err := resource.ParseQuantity("100Gi")
-	if err != nil {
-		return nil, err
-	}
-	storageClassName := "gp2"
-	blockVolumeMode := k8sv1.PersistentVolumeBlock
 	storageCluster := &ocsv1.StorageCluster{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      DefaultStorageClusterName,
@@ -79,18 +70,6 @@ func (t *DeployManager) DefaultStorageCluster() (*ocsv1.StorageCluster, error) {
 		},
 		Spec: ocsv1.StorageClusterSpec{
 			ManageNodes: false,
-			MonPVCTemplate: &k8sv1.PersistentVolumeClaim{
-				Spec: k8sv1.PersistentVolumeClaimSpec{
-					StorageClassName: &storageClassName,
-					AccessModes:      []k8sv1.PersistentVolumeAccessMode{k8sv1.ReadWriteOnce},
-
-					Resources: k8sv1.ResourceRequirements{
-						Requests: k8sv1.ResourceList{
-							"storage": monQuantity,
-						},
-					},
-				},
-			},
 			NFS: &ocsv1.NFSSpec{
 				Enable: true,
 			},
@@ -130,38 +109,9 @@ func (t *DeployManager) DefaultStorageCluster() (*ocsv1.StorageCluster, error) {
 					Limits:   corev1.ResourceList{},
 				},
 			},
-			StorageDeviceSets: []ocsv1.StorageDeviceSet{
-				{
-					Name:     "example-deviceset",
-					Count:    1,
-					Replica:  t.getMinOSDsCount(),
-					Portable: true,
-					Resources: corev1.ResourceRequirements{
-						Requests: corev1.ResourceList{
-							corev1.ResourceMemory: resource.MustParse("1Gi"),
-						},
-					},
-
-					DataPVCTemplate: k8sv1.PersistentVolumeClaim{
-						ObjectMeta: metav1.ObjectMeta{
-							Name: "data",
-						},
-						Spec: k8sv1.PersistentVolumeClaimSpec{
-							StorageClassName: &storageClassName,
-							AccessModes:      []k8sv1.PersistentVolumeAccessMode{k8sv1.ReadWriteOnce},
-							VolumeMode:       &blockVolumeMode,
-
-							Resources: k8sv1.ResourceRequirements{
-								Requests: k8sv1.ResourceList{
-									"storage": dataQuantity,
-								},
-							},
-						},
-					},
-				},
+			MultiCloudGateway: &ocsv1.MultiCloudGatewaySpec{
+				ReconcileStrategy: "standalone",
 			},
-			NodeTopologies: nodeTopologies,
-			Arbiter:        arbiter,
 		},
 	}
 	storageCluster.SetGroupVersionKind(schema.GroupVersionKind{Group: ocsv1.GroupVersion.Group, Kind: "StorageCluster", Version: ocsv1.GroupVersion.Version})
