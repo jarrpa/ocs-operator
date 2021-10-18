@@ -86,6 +86,25 @@ ci() {
   make ocs-operator-ci
 }
 
+#
+ocs_install_48() {
+  ./oc apply -f upgrade-testing/namespace-setup.yaml
+  ./oc apply -f upgrade-testing/subscribe-ocs-4.8.yaml
+}
+
+#
+odf_install() {
+  ./oc apply -f upgrade-testing/namespace-setup.yaml
+  ./oc apply -f upgrade-testing/subscribe-odf-4.9.yaml
+}
+
+#
+odf_uninstall() {
+  ./oc delete subscription,csv --all --force=true
+  ./oc delete crd -l operators.coreos.com/odf-operator.openshift-storage=
+  ./oc delete crd -l operators.coreos.com/ocs-operator.openshift-storage=
+}
+
 #  
 deploy() {
   make cluster-deploy
@@ -122,10 +141,10 @@ ocp_install()
 #  
 clear_recordsets()
 {
-  aws route53 list-resource-record-sets --hosted-zone-id Z3URY6TWQ91KVV | \
-    jq '[.ResourceRecordSets[] |select(.Name|test(".*jarrpa-dev.devcluster.openshift.com."))]|map(.| { Action: "DELETE", ResourceRecordSet: .})|{Comment: "Delete jarrpa recordset",Changes: .}' | \
+  aws route53 list-resource-record-sets --output json --hosted-zone-id Z087500514U36JHEM14R5 | \
+    jq '[.ResourceRecordSets[] |select(.Name|test(".*jarrpa-dev.ocs.syseng.devcluster.openshift.com."))]|map(.| { Action: "DELETE", ResourceRecordSet: .})|{Comment: "Delete jarrpa recordset",Changes: .}' | \
     tee /tmp/recordsets.json
-  aws route53 change-resource-record-sets --hosted-zone-id Z3URY6TWQ91KVV --change-batch file:///tmp/recordsets.json
+  aws route53 change-resource-record-sets --hosted-zone-id Z087500514U36JHEM14R5 --change-batch file:///tmp/recordsets.json
 }
 
 #  
