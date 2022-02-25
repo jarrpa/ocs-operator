@@ -2762,7 +2762,7 @@ spec:
                 - name: NOOBAA_DB_IMAGE
                   value: centos/postgresql-12-centos7
                 - name: PROVIDER_API_SERVER_IMAGE
-                  value: quay.io/ocs-dev/ocs-operator:latest
+                  value: quay.io/jarrpa/ocs-operator:latest
                 image: quay.io/jarrpa/ocs-operator:latest
                 imagePullPolicy: Always
                 name: ocs-operator
