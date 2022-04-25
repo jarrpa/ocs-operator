@@ -19,7 +19,6 @@ package v1
 import (
 	"os"
 
-	nbv1 "github.com/noobaa/noobaa-operator/v5/pkg/apis/noobaa/v1alpha1"
 	quotav1 "github.com/openshift/api/quota/v1"
 	conditionsv1 "github.com/openshift/custom-resource-status/conditions/v1"
 	rookCephv1 "github.com/rook/rook/pkg/apis/ceph.rook.io/v1"
@@ -279,6 +278,27 @@ type StorageDeviceSetConfig struct {
 	TuneFastDeviceClass bool `json:"tuneFastDeviceClass,omitempty"`
 }
 
+// EndpointsSpec defines the desired state of noobaa endpoint deployment
+type EndpointsSpec struct {
+	// MinCount, the number of endpoint instances (pods)
+	// to be used as the lower bound when autoscaling
+	MinCount int32 `json:"minCount,omitempty"`
+
+	// MaxCount, the number of endpoint instances (pods)
+	// to be used as the upper bound when autoscaling
+	MaxCount int32 `json:"maxCount,omitempty"`
+
+	// AdditionalVirtualHosts (optional) provide a list of additional hostnames
+	// (on top of the builtin names defined by the cluster: service name, elb name, route name)
+	// to be used as virtual hosts by the the endpoints in the endpoint deployment
+	// +optional
+	AdditionalVirtualHosts []string `json:"additionalVirtualHosts,omitempty"`
+
+	// Resources (optional) overrides the default resource requirements for every endpoint pod
+	// +optional
+	Resources *corev1.ResourceRequirements `json:"resources,omitempty"`
+}
+
 // MultiCloudGatewaySpec defines specific multi-cloud gateway configuration options
 type MultiCloudGatewaySpec struct {
 	// ReconcileStrategy specifies whether to reconcile NooBaa CRs. Valid
@@ -293,7 +313,7 @@ type MultiCloudGatewaySpec struct {
 	// Endpoints (optional) sets configuration info for the noobaa endpoint
 	// deployment.
 	// +optional
-	Endpoints *nbv1.EndpointsSpec `json:"endpoints,omitempty"`
+	Endpoints *EndpointsSpec `json:"endpoints,omitempty"`
 }
 
 // NFSSpec defines specific nfs configuration options
