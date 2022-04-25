@@ -177,11 +177,13 @@ red-hat-storage-ocs-ci:
 generate: controller-gen
 	@echo Updating generated code
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
+	cd api && $(CONTROLLER_GEN) object:headerFile="../hack/boilerplate.go.txt" paths="./..."
 
 # Generate manifests e.g. CRD, RBAC etc.
 manifests: controller-gen
 	@echo Updating generated manifests
-	$(CONTROLLER_GEN) rbac:roleName=manager-role crd paths=./api/... webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+	cd api && $(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=../config/crd/bases
 
 verify-deps: deps-update
 	@echo "Verifying dependency files"
