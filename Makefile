@@ -206,7 +206,7 @@ ifneq ($(CONTROLLER_GEN_VERSION), $(shell controller-gen --version | awk -F ":" 
 	CONTROLLER_GEN_TMP_DIR=$$(mktemp -d) ;\
 	cd $$CONTROLLER_GEN_TMP_DIR ;\
 	go mod init tmp ;\
-	go get sigs.k8s.io/controller-tools/cmd/controller-gen@$(CONTROLLER_GEN_VERSION) ;\
+	go install sigs.k8s.io/controller-tools/cmd/controller-gen@$(CONTROLLER_GEN_VERSION) ;\
 	rm -rf $$CONTROLLER_GEN_TMP_DIR ;\
 	echo "Installed controller-gen@$(CONTROLLER_GEN_VERSION)" ;\
 	}
@@ -223,7 +223,7 @@ ifeq (, $(shell which kustomize))
 	KUSTOMIZE_GEN_TMP_DIR=$$(mktemp -d) ;\
 	cd $$KUSTOMIZE_GEN_TMP_DIR ;\
 	go mod init tmp ;\
-	go get sigs.k8s.io/kustomize/kustomize/v4@${KUSTOMIZE_VERSION} ;\
+	go install sigs.k8s.io/kustomize/kustomize/v4@${KUSTOMIZE_VERSION} ;\
 	rm -rf $$KUSTOMIZE_GEN_TMP_DIR ;\
 	echo "Installed kustomize/v4@${KUSTOMIZE_VERSION}" ;\
 	}
