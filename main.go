@@ -39,7 +39,7 @@ import (
 	"github.com/red-hat-storage/ocs-operator/controllers/persistentvolume"
 	"github.com/red-hat-storage/ocs-operator/controllers/storageclassclaim"
 	"github.com/red-hat-storage/ocs-operator/controllers/storagecluster"
-	"github.com/red-hat-storage/ocs-operator/controllers/storageconsumer"
+	controllers "github.com/red-hat-storage/ocs-operator/controllers/storageconsumer"
 	cephv1 "github.com/rook/rook/pkg/apis/ceph.rook.io/v1"
 
 	corev1 "k8s.io/api/core/v1"
@@ -209,6 +209,10 @@ func main() {
 	apiClient, err := apiclient.New(mgr.GetConfig(), apiclient.Options{
 		Scheme: mgr.GetScheme(),
 	})
+	if err != nil {
+		setupLog.Error(err, "Unable to get new apiclient")
+		os.Exit(1)
+	}
 
 	// Set OperatorCondition Upgradeable to True
 	// We have to at least default the condition to True or
