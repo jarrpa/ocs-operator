@@ -2,9 +2,15 @@ module github.com/red-hat-storage/ocs-operator
 
 go 1.17
 
-replace github.com/red-hat-storage/ocs-operator/api => ./api
+replace (
+	github.com/red-hat-storage/ocs-operator/api => ./api
+	github.com/red-hat-storage/ocs-operator/services/provider => ./services/provider
+)
 
-require github.com/red-hat-storage/ocs-operator/api v0.0.0
+require (
+	github.com/red-hat-storage/ocs-operator/api v0.0.0
+	github.com/red-hat-storage/ocs-operator/services/provider v0.0.0
+)
 
 require (
 	github.com/RHsyseng/operator-utils v1.4.2
@@ -40,7 +46,7 @@ require (
 	go.uber.org/multierr v1.6.0
 	golang.org/x/crypto v0.0.0-20220208050332-20e1d8d225ab // indirect
 	google.golang.org/grpc v1.45.0
-	google.golang.org/protobuf v1.27.1
+	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/ini.v1 v1.62.0
 	gotest.tools/v3 v3.0.3
 	k8s.io/api v0.23.6
@@ -52,7 +58,7 @@ require (
 	sigs.k8s.io/controller-runtime v0.11.2
 )
 
-require k8s.io/utils v0.0.0-20211116205334-6203023598ed
+require k8s.io/utils v0.0.0-20211116205334-6203023598ed // indirect
 
 require (
 	cloud.google.com/go v0.90.0 // indirect
