@@ -9,7 +9,7 @@ replace (
 
 require (
 	github.com/red-hat-storage/ocs-operator/api v0.0.0
-	github.com/red-hat-storage/ocs-operator/services/provider v0.0.0
+	github.com/red-hat-storage/ocs-operator/services/provider v0.0.0-00010101000000-000000000000
 )
 
 require (
