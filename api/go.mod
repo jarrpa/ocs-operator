@@ -14,7 +14,6 @@ require (
 replace (
 	github.com/red-hat-storage/ocs-operator => github.com/jarrpa/ocs-operator v1.4.12-0.rc2
 	github.com/red-hat-storage/ocs-operator/api => github.com/jarrpa/ocs-operator/api v1.4.12-0.rc2
-	github.com/red-hat-storage/ocs-operator/services/provider => github.com/jarrpa/ocs-operator/services/provider v1.4.12-0.rc2
 )
 
 // === Rook hacks ===
