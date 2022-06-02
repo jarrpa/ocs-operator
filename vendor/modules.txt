@@ -469,6 +469,12 @@ github.com/prometheus/procfs/internal/util
 ## explicit; go 1.17
 github.com/red-hat-storage/ocs-operator/api/v1
 github.com/red-hat-storage/ocs-operator/api/v1alpha1
+# github.com/red-hat-storage/ocs-operator/services/provider v0.0.0 => ./services/provider
+## explicit; go 1.17
+github.com/red-hat-storage/ocs-operator/services/provider/client
+github.com/red-hat-storage/ocs-operator/services/provider/common
+github.com/red-hat-storage/ocs-operator/services/provider/pb
+github.com/red-hat-storage/ocs-operator/services/provider/server
 # github.com/rook/rook v1.9.1
 ## explicit; go 1.17
 github.com/rook/rook/pkg/apis/ceph.rook.io
@@ -1055,6 +1061,7 @@ sigs.k8s.io/structured-merge-diff/v4/value
 ## explicit; go 1.12
 sigs.k8s.io/yaml
 # github.com/red-hat-storage/ocs-operator/api => ./api
+# github.com/red-hat-storage/ocs-operator/services/provider => ./services/provider
 # github.com/kubernetes-incubator/external-storage => github.com/libopenstorage/external-storage v0.20.4-openstorage-rc3
 # github.com/openshift/api => github.com/openshift/api v0.0.0-20201203102015-275406142edb
 # github.com/portworx/sched-ops => github.com/portworx/sched-ops v0.20.4-openstorage-rc3
