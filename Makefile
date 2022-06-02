@@ -51,6 +51,7 @@ all: ocs-operator ocs-registry ocs-must-gather
 deps-update:
 	@echo "Running deps-update"
 	cd api && go mod tidy -compat=1.17
+	cd services/provider && go mod tidy -compat=1.17
 	go mod tidy -compat=1.17 && go mod vendor
 
 operator-sdk:
