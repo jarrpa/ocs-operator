@@ -2482,10 +2482,10 @@ spec:
                 - name: CEPH_IMAGE
                   value: ceph/daemon-base:latest-pacific
                 - name: NOOBAA_CORE_IMAGE
-                  value: quay.io/jarrpa/noobaa-operator:latest-4.8
+                  value: quay.io/ocs-dev/noobaa-operator:latest-4.8
                 - name: NOOBAA_DB_IMAGE
                   value: centos/postgresql-12-centos7
-                image: quay.io/ocs-dev/ocs-operator:latest
+                image: quay.io/jarrpa/ocs-operator:latest
                 imagePullPolicy: Always
                 name: ocs-operator
                 readinessProbe:
@@ -2624,10 +2624,10 @@ spec:
                     fieldRef:
                       fieldPath: metadata.namespace
                 - name: NOOBAA_CORE_IMAGE
-                  value: quay.io/jarrpa/noobaa-operator:latest-4.8
+                  value: quay.io/ocs-dev/noobaa-operator:latest-4.8
                 - name: NOOBAA_DB_IMAGE
                   value: centos/postgresql-12-centos7
-                image: quay.io/jarrpa/noobaa-operator:latest-4.8
+                image: quay.io/ocs-dev/noobaa-operator:latest-4.8
                 name: noobaa-operator
                 resources:
                   limits:
@@ -2659,7 +2659,7 @@ spec:
                 - --namespaces=openshift-storage
                 command:
                 - /usr/local/bin/metrics-exporter
-                image: quay.io/ocs-dev/ocs-operator:latest
+                image: quay.io/jarrpa/ocs-operator:latest
                 name: ocs-metrics-exporter
                 ports:
                 - containerPort: 8080
@@ -3066,12 +3066,12 @@ spec:
     name: ceph-container
   - image: quay.io/csiaddons/volumereplication-operator:v0.1.0
     name: volume-replication-operator
-  - image: quay.io/jarrpa/noobaa-operator:latest-4.8
+  - image: quay.io/ocs-dev/noobaa-operator:latest-4.8
     name: noobaa-operator
-  - image: quay.io/jarrpa/noobaa-operator:latest-4.8
+  - image: quay.io/ocs-dev/noobaa-operator:latest-4.8
     name: noobaa-core
   - image: centos/postgresql-12-centos7
     name: noobaa-db
-  - image: quay.io/ocs-dev/ocs-must-gather:latest
+  - image: quay.io/jarrpa/ocs-must-gather:latest
     name: ocs-must-gather
   version: 4.8.0
