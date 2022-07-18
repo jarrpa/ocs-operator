@@ -15,13 +15,13 @@ func BeforeTestSuiteSetup() {
 	}
 
 	debug("BeforeTestSuite: starting default StorageCluster\n")
-	err := DeployManager.StartDefaultStorageCluster()
+	// err := DeployManager.StartDefaultStorageCluster()
 
-	gomega.Expect(err).To(gomega.BeNil())
+	//gomega.Expect(err).To(gomega.BeNil())
 
 	debug("BeforeTestSuite: creating Namespace %s\n", TestNamespace)
-	err = DeployManager.CreateNamespace(TestNamespace)
-	gomega.Expect(err).To(gomega.BeNil())
+	//err = DeployManager.CreateNamespace(TestNamespace)
+	//gomega.Expect(err).To(gomega.BeNil())
 
 	SuiteFailed = false
 
@@ -41,10 +41,10 @@ func AfterTestSuiteCleanup() {
 	}
 
 	debug("AfterTestSuite: deleting Namespace %s\n", TestNamespace)
-	err := DeployManager.DeleteNamespaceAndWait(TestNamespace)
-	gomega.Expect(err).To(gomega.BeNil())
+	//err := DeployManager.DeleteNamespaceAndWait(TestNamespace)
+	//gomega.Expect(err).To(gomega.BeNil())
 
-	if ocsClusterUninstall {
+	if false {
 		debug("AfterTestSuite: deleting default StorageCluster\n")
 		err := DeployManager.DeleteStorageCluster()
 		gomega.Expect(err).To(gomega.BeNil())
