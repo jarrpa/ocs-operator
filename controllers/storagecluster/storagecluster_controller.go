@@ -117,10 +117,9 @@ func (r *StorageClusterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		},
 	}
 
-	return ctrl.NewControllerManagedBy(mgr).
+	controller, err := ctrl.NewControllerManagedBy(mgr).
 		For(&ocsv1.StorageCluster{}, builder.WithPredicates(scPredicate)).
 		Owns(&cephv1.CephCluster{}).
-		Owns(&nbv1.NooBaa{}).
 		Owns(&corev1.PersistentVolumeClaim{}, builder.WithPredicates(pvcPredicate)).
 		Owns(&appsv1.Deployment{}, builder.WithPredicates(predicate.GenerationChangedPredicate{})).
 		Owns(&corev1.Service{}, builder.WithPredicates(predicate.GenerationChangedPredicate{})).
@@ -128,5 +127,12 @@ func (r *StorageClusterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			&source.Kind{Type: &ocsv1.OCSInitialization{}},
 			&handler.EnqueueRequestForObject{},
 		).
-		Complete(r)
+		Build(r)
+
+	if err == nil && r.noobaaCrdExists() {
+		src := &source.Kind{Type: &nbv1.NooBaa{}}
+		err = controller.Watch(src, &handler.EnqueueRequestForObject{}, predicate.GenerationChangedPredicate{})
+	}
+
+	return err
 }
