@@ -11,6 +11,7 @@ import (
 	statusutil "github.com/red-hat-storage/ocs-operator/controllers/util"
 	cephv1 "github.com/rook/rook/pkg/apis/ceph.rook.io/v1"
 	corev1 "k8s.io/api/core/v1"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -22,6 +23,12 @@ import (
 )
 
 type ocsNoobaaSystem struct{}
+
+func (r *StorageClusterReconciler) noobaaCrdExists() bool {
+	crd := apiextensionsv1.CustomResourceDefinition{}
+	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: "noobaas.nooba.io"}, &crd)
+	return err == nil
+}
 
 func (obj *ocsNoobaaSystem) ensureCreated(r *StorageClusterReconciler, sc *ocsv1.StorageCluster) (reconcile.Result, error) {
 	var err error
@@ -36,6 +43,12 @@ func (obj *ocsNoobaaSystem) ensureCreated(r *StorageClusterReconciler, sc *ocsv1
 	}
 
 	if !r.IsNoobaaStandalone {
+		if !r.noobaaCrdExists() {
+			// If NooBaa CRD doesn't exist, quietly skip reconciliation so as not to spam the logs
+			r.Log.Info("Noobaa CRD not found. Skipping Noobaa reconciliation")
+			return reconcile.Result{}, nil
+		}
+
 		// find cephCluster
 		foundCeph := &cephv1.CephCluster{}
 		err = r.Client.Get(context.TODO(), types.NamespacedName{Name: generateNameForCephCluster(sc), Namespace: sc.Namespace}, foundCeph)

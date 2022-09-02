@@ -22,6 +22,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	storagev1 "k8s.io/api/storage/v1"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -247,6 +248,12 @@ var mockInfrastructure = &configv1.Infrastructure{
 	},
 	Status: configv1.InfrastructureStatus{
 		Platform: "",
+	},
+}
+
+var fakeNoobaaCrd = &apiextensionsv1.CustomResourceDefinition{
+	ObjectMeta: metav1.ObjectMeta{
+		Name: "noobaas.noobaa.io",
 	},
 }
 
@@ -968,7 +975,7 @@ func createFakeStorageClusterReconciler(t *testing.T, obj ...runtime.Object) Sto
 			Phase: cephv1.ConditionType(util.PhaseReady),
 		},
 	}
-	obj = append(obj, cbp, cfs)
+	obj = append(obj, cbp, cfs, fakeNoobaaCrd)
 	client := fake.NewClientBuilder().WithScheme(scheme).WithRuntimeObjects(obj...).Build()
 
 	return StorageClusterReconciler{
@@ -989,6 +996,10 @@ func createFakeScheme(t *testing.T) *runtime.Scheme {
 	err = corev1.AddToScheme(scheme)
 	if err != nil {
 		assert.Fail(t, "failed to add corev1 scheme")
+	}
+	err = apiextensionsv1.AddToScheme(scheme)
+	if err != nil {
+		assert.Fail(t, "failed to add apiextensionsv1 scheme")
 	}
 	err = storagev1.AddToScheme(scheme)
 	if err != nil {
