@@ -43,7 +43,7 @@ func (obj *ocsNoobaaSystem) ensureCreated(r *StorageClusterReconciler, sc *ocsv1
 	}
 
 	if !r.IsNoobaaStandalone {
-		if !r.noobaaCrdExists() {
+		if false {
 			// If NooBaa CRD doesn't exist, quietly skip reconciliation so as not to spam the logs
 			r.Log.Info("Noobaa CRD not found. Skipping Noobaa reconciliation")
 			return reconcile.Result{}, nil
