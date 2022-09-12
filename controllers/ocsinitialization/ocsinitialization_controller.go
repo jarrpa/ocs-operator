@@ -65,29 +65,32 @@ func (r *OCSInitializationReconciler) Reconcile(ctx context.Context, request rec
 	defer func() { r.Log = prevLogger }()
 	r.Log = r.Log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
 
-	r.Log.Info("Reconciling OCSInitialization.", "OCSInitialization", klog.KRef(request.Namespace, request.Name))
-
 	initNamespacedName := InitNamespacedName()
 	instance := &ocsv1.OCSInitialization{}
 	if initNamespacedName.Name != request.Name || initNamespacedName.Namespace != request.Namespace {
 		// Ignoring this resource because it has the wrong name or namespace
-		r.Log.Info(wrongNamespacedName)
-		err := r.Client.Get(ctx, request.NamespacedName, instance)
-		if err != nil {
-			// the resource probably got deleted
-			if errors.IsNotFound(err) {
-				return reconcile.Result{}, nil
+		return reconcile.Result{}, nil
+		/*
+			r.Log.Info(wrongNamespacedName)
+			err := r.Client.Get(ctx, request.NamespacedName, instance)
+			if err != nil {
+				// the resource probably got deleted
+				if errors.IsNotFound(err) {
+					return reconcile.Result{}, nil
+				}
+				return reconcile.Result{}, err
+			}
+
+			instance.Status.Phase = util.PhaseIgnored
+			err = r.Client.Status().Update(ctx, instance)
+			if err != nil {
+				r.Log.Error(err, "Failed to update ignored OCSInitialization resource.", "OCSInitialization", klog.KRef(instance.Namespace, instance.Name))
 			}
 			return reconcile.Result{}, err
-		}
-
-		instance.Status.Phase = util.PhaseIgnored
-		err = r.Client.Status().Update(ctx, instance)
-		if err != nil {
-			r.Log.Error(err, "Failed to update ignored OCSInitialization resource.", "OCSInitialization", klog.KRef(instance.Namespace, instance.Name))
-		}
-		return reconcile.Result{}, err
+		*/
 	}
+
+	r.Log.Info("Reconciling OCSInitialization.", "OCSInitialization", klog.KRef(request.Namespace, request.Name))
 
 	// Fetch the OCSInitialization instance
 	err := r.Client.Get(ctx, request.NamespacedName, instance)
