@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/go-logr/logr"
 	"github.com/google/uuid"
@@ -79,7 +80,6 @@ type StorageClassConfigReconciler struct {
 
 func (r *StorageClassConfigReconciler) Reconcile(ctx context.Context, request reconcile.Request) (reconcile.Result, error) {
 	r.log = ctrllog.FromContext(ctx, "StorageClassClaim", request)
-	r.ctx = ctrllog.IntoContext(ctx, r.log)
 	r.log.Info("Reconciling StorageClassClaim.")
 
 	// Fetch the StorageClassClaim instance
@@ -96,7 +96,9 @@ func (r *StorageClassConfigReconciler) Reconcile(ctx context.Context, request re
 		return reconcile.Result{}, err
 	}
 
-	r.storageClassClaim.Status.Phase = v1alpha1.StorageClassClaimInitializing
+	if r.storageClassClaim.Status.Phase == "" {
+		r.storageClassClaim.Status.Phase = v1alpha1.StorageClassClaimInitializing
+	}
 
 	storageClusterList := &v1.StorageClusterList{}
 	if err := r.list(storageClusterList, client.InNamespace(r.OperatorNamespace)); err != nil {
@@ -170,10 +172,6 @@ func (r *StorageClassConfigReconciler) SetupWithManager(mgr ctrl.Manager) error 
 }
 
 func (r *StorageClassConfigReconciler) reconcilePhases() (reconcile.Result, error) {
-	r.log.Info("Running StorageClassClaim controller in Converged/Provider Mode")
-
-	r.storageClassClaim.Status.Phase = v1alpha1.StorageClassClaimInitializing
-
 	gvk, err := apiutil.GVKForObject(&v1alpha1.StorageConsumer{}, r.Client.Scheme())
 	if err != nil {
 		return reconcile.Result{}, fmt.Errorf("failed to get gvk for consumer  %w", err)
@@ -255,7 +253,11 @@ func (r *StorageClassConfigReconciler) reconcilePhases() (reconcile.Result, erro
 		r.cephResourcesByName[cephResourceSpec.Name] = cephResourceSpec
 	}
 
-	r.storageClassClaim.Status.Phase = v1alpha1.StorageClassClaimCreating
+	if r.storageClassClaim.Status.Phase == v1alpha1.StorageClassClaimInitializing {
+		r.storageClassClaim.Status.Phase = v1alpha1.StorageClassClaimCreating
+	} else {
+		r.storageClassClaim.Status.Phase = v1alpha1.StorageClassClaimConfiguring
+	}
 
 	if r.storageClassClaim.GetDeletionTimestamp().IsZero() {
 		if r.storageClassClaim.Spec.Type == "blockpool" {
@@ -288,15 +290,16 @@ func (r *StorageClassConfigReconciler) reconcilePhases() (reconcile.Result, erro
 		cephResourcesReady := true
 		for _, cephResource := range r.storageClassClaim.Status.CephResources {
 			if cephResource.Phase != "Ready" {
+				r.log.Info("ceph resource not ready", "cephResource", cephResource)
 				cephResourcesReady = false
-				break
 			}
 		}
 
-		if cephResourcesReady {
-			r.storageClassClaim.Status.Phase = v1alpha1.StorageClassClaimReady
+		if !cephResourcesReady {
+			r.log.Info("one or more ceph resources not ready, requeuing")
+			return reconcile.Result{RequeueAfter: 5 * time.Second}, nil
 		}
-
+		r.storageClassClaim.Status.Phase = v1alpha1.StorageClassClaimReady
 	} else {
 		r.storageClassClaim.Status.Phase = v1alpha1.StorageClassClaimDeleting
 	}
