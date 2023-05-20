@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ux-backend-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ux-backend-server
+      app.kubernetes.io/component: ux-backend-server
+      app.kubernetes.io/name: ux-backend-server
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ux-backend-server
+        app.kubernetes.io/component: ux-backend-server
+        app.kubernetes.io/name: ux-backend-server
+    spec:
+      containers:
+      - command:
+        - /usr/local/bin/ux-backend-server
+        env:
+        - name: ONBOARDING_TOKEN_LIFETIME
+        - name: UX_BACKEND_PORT
+          value: "8888"
+        - name: TLS_ENABLED
+        image: controller
+        imagePullPolicy: IfNotPresent
+        name: ux-backend-server
+        ports:
+        - containerPort: 8888
+        resources: {}
+        volumeMounts:
+        - mountPath: /etc/private-key
+          name: onboarding-private-key
+      serviceAccountName: ux-backend-server
+      tolerations:
+      - effect: NoSchedule
+        key: node.ocs.openshift.io/storage
+        operator: Equal
+        value: "true"
+      volumes:
+      - name: onboarding-private-key
+        secret:
+          optional: true
+          secretName: onboarding-private-key

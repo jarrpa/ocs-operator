@@ -42,9 +42,10 @@ function gen_ocs_csv() {
 	# shellcheck disable=SC2086
 	$OPERATOR_SDK $gen_args
 	pushd config/manager
-	$KUSTOMIZE edit set image ocs-dev/ocs-operator="$OCS_IMAGE"
+	$KUSTOMIZE edit set image controller="$OCS_IMAGE"
 	popd
-	$KUSTOMIZE build config/manifests/ocs-operator | $OPERATOR_SDK generate bundle -q --overwrite=false --output-dir deploy/ocs-operator --kustomize-dir config/manifests/ocs-operator --package ocs-operator --version "$CSV_VERSION" --extra-service-accounts=ux-backend-server
+	OPERATOR_NAMEPREFIX="ocs-operator-"
+	$KUSTOMIZE build config/manifests/ocs-operator | $OPERATOR_SDK generate bundle -q --overwrite=false --output-dir deploy/ocs-operator --kustomize-dir config/manifests/ocs-operator --package ocs-operator --version "$CSV_VERSION" --extra-service-accounts="${OPERATOR_NAMEPREFIX}ux-backend-server"
 	mv deploy/ocs-operator/manifests/*clusterserviceversion.yaml $OCS_CSV
 	cp config/crd/bases/* $ocs_crds_outdir
 	cp config/dependencies/dependencies.yaml deploy/ocs-operator/metadata/dependencies.yaml

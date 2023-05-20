@@ -553,34 +553,20 @@ spec:
           - templates
           verbs:
           - '*'
-        serviceAccountName: ocs-operator
-      - rules:
-        - apiGroups:
-          - authentication.k8s.io
-          resources:
-          - tokenreviews
-          verbs:
-          - create
-        - apiGroups:
-          - authorization.k8s.io
-          resources:
-          - subjectaccessreviews
-          verbs:
-          - create
-        serviceAccountName: ux-backend-server
+        serviceAccountName: ocs-operator-controller-manager
       deployments:
-      - name: ocs-operator
+      - name: ocs-operator-controller-manager
         spec:
           replicas: 1
           selector:
             matchLabels:
-              name: ocs-operator
+              name: controller-manager
           strategy:
             type: Recreate
           template:
             metadata:
               labels:
-                name: ocs-operator
+                name: controller-manager
             spec:
               containers:
               - args:
@@ -589,6 +575,8 @@ spec:
                 command:
                 - ocs-operator
                 env:
+                - name: SKIP_NOOBAA_CRD_WATCH
+                  value: "false"
                 - name: WATCH_NAMESPACE
                   valueFrom:
                     fieldRef:
@@ -632,8 +620,53 @@ spec:
                   name: onboarding-private-key
               securityContext:
                 runAsNonRoot: true
-              serviceAccountName: ocs-operator
+              serviceAccountName: ocs-operator-controller-manager
               terminationGracePeriodSeconds: 10
+              tolerations:
+              - effect: NoSchedule
+                key: node.ocs.openshift.io/storage
+                operator: Equal
+                value: "true"
+              volumes:
+              - name: onboarding-private-key
+                secret:
+                  optional: true
+                  secretName: onboarding-private-key
+      - name: ocs-operator-ux-backend-server
+        spec:
+          replicas: 1
+          selector:
+            matchLabels:
+              app: ux-backend-server
+              app.kubernetes.io/component: ux-backend-server
+              app.kubernetes.io/name: ux-backend-server
+          strategy:
+            type: Recreate
+          template:
+            metadata:
+              labels:
+                app: ux-backend-server
+                app.kubernetes.io/component: ux-backend-server
+                app.kubernetes.io/name: ux-backend-server
+            spec:
+              containers:
+              - command:
+                - /usr/local/bin/ux-backend-server
+                env:
+                - name: ONBOARDING_TOKEN_LIFETIME
+                - name: UX_BACKEND_PORT
+                  value: "8888"
+                - name: TLS_ENABLED
+                image: quay.io/ocs-dev/ocs-operator:latest
+                imagePullPolicy: IfNotPresent
+                name: ux-backend-server
+                ports:
+                - containerPort: 8888
+                resources: {}
+                volumeMounts:
+                - mountPath: /etc/private-key
+                  name: onboarding-private-key
+              serviceAccountName: ocs-operator-ux-backend-server
               tolerations:
               - effect: NoSchedule
                 key: node.ocs.openshift.io/storage
@@ -725,6 +758,36 @@ spec:
               - name: ux-cert-secret
                 secret:
                   secretName: ux-cert-secret
+      permissions:
+      - rules:
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          verbs:
+          - get
+          - list
+          - watch
+          - create
+          - update
+          - patch
+          - delete
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps/status
+          verbs:
+          - get
+          - update
+          - patch
+        - apiGroups:
+          - ""
+          resources:
+          - events
+          verbs:
+          - create
+          - patch
+        serviceAccountName: ocs-operator-controller-manager
     strategy: deployment
   installModes:
   - supported: true
