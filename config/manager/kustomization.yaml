@@ -3,6 +3,6 @@ resources:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
-- name: ocs-dev/ocs-operator
+- name: controller
   newName: quay.io/ocs-dev/ocs-operator
   newTag: latest

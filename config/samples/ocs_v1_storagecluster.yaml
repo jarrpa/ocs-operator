@@ -1,26 +1,31 @@
 apiVersion: ocs.openshift.io/v1
 kind: StorageCluster
 metadata:
-  namespace: openshift-storage
   name: example-storagecluster
 spec:
+  enableCephTools: true
+  labelSelector: {}
   manageNodes: false
-  monPVCTemplate:
-    spec:
-      storageClassName: gp2-csi
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 10Gi
+  multiCloudGateway:
+    reconcileStrategy: ignore
+  resources:
+    mds: {}
+    mgr: {}
+    mon: {}
+    nfs: {}
+    noobaa-core: {}
+    noobaa-db: {}
+    noobaa-endpoint: {}
+    rgw: {}
   storageDeviceSets:
   - name: example-deviceset
-    count: 3
+    count: 1
+    replica: 3
     resources: {}
     placement: {}
     dataPVCTemplate:
       spec:
-        storageClassName: gp2-csi
+        storageClassName: gp3-csi
         accessModes:
         - ReadWriteOnce
         volumeMode: Block
