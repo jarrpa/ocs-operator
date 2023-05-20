@@ -56,7 +56,7 @@ metadata:
       ]
     capabilities: Deep Insights
     categories: Storage
-    containerImage: quay.io/ocs-dev/ocs-operator:4.15.0
+    containerImage: quay.io/ocs-dev/ocs-operator:latest
     description: Red Hat OpenShift Container Storage provides hyperconverged storage
       for applications within an OpenShift cluster.
     external.features.ocs.openshift.io/export-script: |-
@@ -2281,7 +2281,7 @@ spec:
           - templates
           verbs:
           - '*'
-        serviceAccountName: ocs-operator
+        serviceAccountName: ocs-operator-controller-manager
       - rules:
         - apiGroups:
           - authentication.k8s.io
@@ -2295,7 +2295,7 @@ spec:
           - subjectaccessreviews
           verbs:
           - create
-        serviceAccountName: ux-backend-server
+        serviceAccountName: ocs-operator-ux-backend-server
       - rules:
         - apiGroups:
           - ""
@@ -3057,18 +3057,18 @@ spec:
           - use
         serviceAccountName: rook-ceph-system
       deployments:
-      - name: ocs-operator
+      - name: ocs-operator-controller-manager
         spec:
           replicas: 1
           selector:
             matchLabels:
-              name: ocs-operator
+              name: controller-manager
           strategy:
             type: Recreate
           template:
             metadata:
               labels:
-                name: ocs-operator
+                name: controller-manager
             spec:
               containers:
               - args:
@@ -3077,6 +3077,8 @@ spec:
                 command:
                 - ocs-operator
                 env:
+                - name: SKIP_NOOBAA_CRD_WATCH
+                  value: "false"
                 - name: WATCH_NAMESPACE
                   valueFrom:
                     fieldRef:
@@ -3116,7 +3118,7 @@ spec:
                     - all
               securityContext:
                 runAsNonRoot: true
-              serviceAccountName: ocs-operator
+              serviceAccountName: ocs-operator-controller-manager
               terminationGracePeriodSeconds: 10
               tolerations:
               - effect: NoSchedule
@@ -3350,6 +3352,35 @@ spec:
                 secret:
                   secretName: ux-cert-secret
       permissions:
+      - rules:
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          verbs:
+          - get
+          - list
+          - watch
+          - create
+          - update
+          - patch
+          - delete
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps/status
+          verbs:
+          - get
+          - update
+          - patch
+        - apiGroups:
+          - ""
+          resources:
+          - events
+          verbs:
+          - create
+          - patch
+        serviceAccountName: ocs-operator-controller-manager
       - rules:
         - apiGroups:
           - ""
