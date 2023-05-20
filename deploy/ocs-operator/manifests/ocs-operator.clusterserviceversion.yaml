@@ -56,7 +56,7 @@ metadata:
       ]
     capabilities: Deep Insights
     categories: Storage
-    containerImage: quay.io/ocs-dev/ocs-operator:4.15.0
+    containerImage: quay.io/ocs-dev/ocs-operator:latest
     description: Red Hat OpenShift Container Storage provides hyperconverged storage
       for applications within an OpenShift cluster.
     external.features.ocs.openshift.io/export-script: |-
@@ -1878,71 +1878,6 @@ spec:
       clusterPermissions:
       - rules:
         - apiGroups:
-          - ceph.rook.io
-          resources:
-          - cephobjectstores
-          - cephblockpools
-          - cephclusters
-          - cephrbdmirrors
-          verbs:
-          - get
-          - list
-          - watch
-        - apiGroups:
-          - quota.openshift.io
-          resources:
-          - clusterresourcequotas
-          verbs:
-          - get
-          - list
-          - watch
-        - apiGroups:
-          - objectbucket.io
-          resources:
-          - objectbuckets
-          - objectbucketclaims
-          verbs:
-          - get
-          - list
-        - apiGroups:
-          - ""
-          resources:
-          - configmaps
-          - secrets
-          verbs:
-          - get
-          - list
-        - apiGroups:
-          - ""
-          resources:
-          - persistentvolumes
-          - persistentvolumeclaims
-          - pods
-          - nodes
-          verbs:
-          - get
-          - list
-          - watch
-        - apiGroups:
-          - storage.k8s.io
-          resources:
-          - storageclasses
-          verbs:
-          - get
-          - list
-          - watch
-        - apiGroups:
-          - ocs.openshift.io
-          resources:
-          - storageconsumers
-          - storageclusters
-          verbs:
-          - get
-          - list
-          - watch
-        serviceAccountName: ocs-metrics-exporter
-      - rules:
-        - apiGroups:
           - apiextensions.k8s.io
           resources:
           - customresourcedefinitions
@@ -2273,7 +2208,72 @@ spec:
           - templates
           verbs:
           - '*'
-        serviceAccountName: ocs-operator
+        serviceAccountName: ocs-operator-controller-manager
+      - rules:
+        - apiGroups:
+          - ceph.rook.io
+          resources:
+          - cephobjectstores
+          - cephblockpools
+          - cephclusters
+          - cephrbdmirrors
+          verbs:
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - quota.openshift.io
+          resources:
+          - clusterresourcequotas
+          verbs:
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - objectbucket.io
+          resources:
+          - objectbuckets
+          - objectbucketclaims
+          verbs:
+          - get
+          - list
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          - secrets
+          verbs:
+          - get
+          - list
+        - apiGroups:
+          - ""
+          resources:
+          - persistentvolumes
+          - persistentvolumeclaims
+          - pods
+          - nodes
+          verbs:
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - storage.k8s.io
+          resources:
+          - storageclasses
+          verbs:
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - ocs.openshift.io
+          resources:
+          - storageconsumers
+          - storageclusters
+          verbs:
+          - get
+          - list
+          - watch
+        serviceAccountName: ocs-operator-metrics-exporter
       - rules:
         - apiGroups:
           - ""
@@ -3052,18 +3052,18 @@ spec:
           - '*'
         serviceAccountName: ocs-metrics-exporter
       deployments:
-      - name: ocs-operator
+      - name: ocs-operator-controller-manager
         spec:
           replicas: 1
           selector:
             matchLabels:
-              name: ocs-operator
+              name: controller-manager
           strategy:
             type: Recreate
           template:
             metadata:
               labels:
-                name: ocs-operator
+                name: controller-manager
             spec:
               containers:
               - args:
@@ -3107,7 +3107,7 @@ spec:
                     - all
               securityContext:
                 runAsNonRoot: true
-              serviceAccountName: ocs-operator
+              serviceAccountName: ocs-operator-controller-manager
               terminationGracePeriodSeconds: 10
               tolerations:
               - effect: NoSchedule
@@ -3325,6 +3325,35 @@ spec:
                   name: ocs-metrics-exporter-ceph-conf
                 name: ceph-config
       permissions:
+      - rules:
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          verbs:
+          - get
+          - list
+          - watch
+          - create
+          - update
+          - patch
+          - delete
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps/status
+          verbs:
+          - get
+          - update
+          - patch
+        - apiGroups:
+          - ""
+          resources:
+          - events
+          verbs:
+          - create
+          - patch
+        serviceAccountName: ocs-operator-controller-manager
       - rules:
         - apiGroups:
           - ""
