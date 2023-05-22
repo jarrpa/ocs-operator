@@ -39,6 +39,8 @@ spec:
         imagePullPolicy: Always
         name: ocs-operator
         env:
+          - name: SKIP_NOOBAA_CRD_WATCH
+            value: "true"
           - name: WATCH_NAMESPACE
             valueFrom:
               fieldRef:
