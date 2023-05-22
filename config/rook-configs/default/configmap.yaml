@@ -1,0 +1,15 @@
+# Rook Ceph Operator Config ConfigMap
+# Use this ConfigMap to override Rook-Ceph Operator configurations.
+# NOTE! Precedence will be given to this config if the same Env Var config also exists in the
+#       Operator Deployment.
+# To move a configuration(s) from the Operator Deployment to this ConfigMap, add the config
+# here. It is recommended to then remove it from the Deployment to eliminate any future confusion.
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: rook-ceph-operator-config
+data:
+  ROOK_CSI_ENABLE_CEPHFS: "true"
+  ROOK_CSI_ENABLE_RBD: "false"
+  ROOK_CSI_ENABLE_NFS: "false"
+  ROOK_CSI_ENABLE_GRPC_METRICS: "true"
