@@ -1,0 +1,23 @@
+resources:
+- bases/ceph.rook.io_cephblockpoolradosnamespaces.yaml
+- bases/ceph.rook.io_cephblockpools.yaml
+- bases/ceph.rook.io_cephbucketnotifications.yaml
+- bases/ceph.rook.io_cephbuckettopics.yaml
+- bases/ceph.rook.io_cephclients.yaml
+- bases/ceph.rook.io_cephclusters.yaml
+- bases/ceph.rook.io_cephcosidrivers.yaml
+- bases/ceph.rook.io_cephfilesystemmirrors.yaml
+- bases/ceph.rook.io_cephfilesystemsubvolumegroups.yaml
+- bases/ceph.rook.io_cephfilesystems.yaml
+- bases/ceph.rook.io_cephnfses.yaml
+- bases/ceph.rook.io_cephobjectrealms.yaml
+- bases/ceph.rook.io_cephobjectstores.yaml
+- bases/ceph.rook.io_cephobjectstoreusers.yaml
+- bases/ceph.rook.io_cephobjectzonegroups.yaml
+- bases/ceph.rook.io_cephobjectzones.yaml
+- bases/ceph.rook.io_cephrbdmirrors.yaml
+# +kubebuilder:scaffold:crdkustomizeresource
+
+# the following config is for teaching kustomize how to do kustomization for CRDs.
+configurations:
+- kustomizeconfig.yaml
