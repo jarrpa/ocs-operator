@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rook-ceph-operator-config
+data:
+  ROOK_CSI_ENABLE_CEPHFS: "false"
+  ROOK_CSI_ENABLE_GRPC_METRICS: "false"
