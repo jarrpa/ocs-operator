@@ -18,7 +18,6 @@ import (
 	"github.com/operator-framework/api/pkg/lib/version"
 	csvv1 "github.com/operator-framework/api/pkg/operators/v1alpha1"
 	"github.com/red-hat-storage/ocs-operator/v4/controllers/util"
-	ocsversion "github.com/red-hat-storage/ocs-operator/v4/version"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbac "k8s.io/api/rbac/v1"
@@ -632,7 +631,7 @@ func generateUnifiedCSV() *csvv1.ClusterServiceVersion {
 		}
 		ocsCSV.Annotations["createdAt"] = time.Now().In(loc).Format("2006-01-02 15:04:05")
 	}
-	ocsCSV.Annotations["containerImage"] = "quay.io/ocs-dev/ocs-operator:" + ocsversion.Version
+	ocsCSV.Annotations["containerImage"] = *ocsContainerImage
 	ocsCSV.Annotations["capabilities"] = "Deep Insights"
 	ocsCSV.Annotations["categories"] = "Storage"
 	ocsCSV.Annotations["operators.operatorframework.io/operator-type"] = "non-standalone"
