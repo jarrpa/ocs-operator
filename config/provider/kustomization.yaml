@@ -1,0 +1,10 @@
+resources:
+- provider_role.yaml
+- provider_role_binding.yaml
+- provider_service_account.yaml
+- onboarding-secret-generator-role.yaml
+- onboarding-secret-generator-binding.yaml
+- onboarding-secret-generator-sa.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: ocs-operator-system
