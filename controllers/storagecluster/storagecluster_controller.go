@@ -26,6 +26,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
+	ctrllog "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
@@ -133,6 +134,7 @@ func (r *StorageClusterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			}
 
 			// Get the StorageCluster objects
+			r.ctx = ctrllog.IntoContext(context, r.Log)
 			scList := &ocsv1.StorageClusterList{}
 			err := r.Client.List(r.ctx, scList, &client.ListOptions{Namespace: obj.GetNamespace()})
 			if err != nil {
