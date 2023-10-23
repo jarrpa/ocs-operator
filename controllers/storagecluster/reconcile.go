@@ -2,7 +2,6 @@ package storagecluster
 
 import (
 	"context"
-	error1 "errors"
 	"fmt"
 	"strings"
 	"time"
@@ -10,16 +9,12 @@ import (
 	"github.com/blang/semver/v4"
 	"github.com/go-logr/logr"
 	conditionsv1 "github.com/openshift/custom-resource-status/conditions/v1"
-	"github.com/operator-framework/operator-lib/conditions"
 	ocsv1 "github.com/red-hat-storage/ocs-operator/api/v4/v1"
-	ocsv1alpha1 "github.com/red-hat-storage/ocs-operator/api/v4/v1alpha1"
 	statusutil "github.com/red-hat-storage/ocs-operator/v4/controllers/util"
 	"github.com/red-hat-storage/ocs-operator/v4/version"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/klog/v2"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 	ctrllog "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
@@ -372,10 +367,10 @@ func (r *StorageClusterReconciler) reconcilePhases(
 		r.Log.Info("StorageCluster is terminated, skipping reconciliation.", "StorageCluster", klog.KRef(instance.Namespace, instance.Name))
 
 		// mark operator upgradeable if and only if all other storageclusters are ready or current cluster is the last cluster
-		if r.clusters.AreOtherStorageClustersReady(instance) {
-			returnErr := r.SetOperatorConditions("Skipping StorageCluster reconciliation", "Terminated", metav1.ConditionTrue, nil)
-			return reconcile.Result{}, returnErr
-		}
+		//if r.clusters.AreOtherStorageClustersReady(instance) {
+		//	returnErr := r.SetOperatorConditions("Skipping StorageCluster reconciliation", "Terminated", metav1.ConditionTrue, nil)
+		//	return reconcile.Result{}, returnErr
+		//}
 
 		return reconcile.Result{}, nil
 	}
@@ -410,7 +405,7 @@ func (r *StorageClusterReconciler) reconcilePhases(
 				&ocsSnapshotClass{},
 				&ocsJobTemplates{},
 				&ocsCephRbdMirrors{},
-				&ocsClusterClaim{},
+				//&ocsClusterClaim{},
 			}
 		} else {
 			// noobaa-only ensure functions
@@ -428,7 +423,7 @@ func (r *StorageClusterReconciler) reconcilePhases(
 			&ocsCephCluster{},
 			&ocsSnapshotClass{},
 			//&ocsNoobaaSystem{},
-			&ocsClusterClaim{},
+			//&ocsClusterClaim{},
 		}
 	}
 
@@ -437,7 +432,7 @@ func (r *StorageClusterReconciler) reconcilePhases(
 		if r.phase == statusutil.PhaseClusterExpanding {
 			message := "StorageCluster is expanding"
 			reason := "Expanding"
-			returnErr = r.SetOperatorConditions(message, reason, metav1.ConditionFalse, returnErr)
+			//returnErr = r.SetOperatorConditions(message, reason, metav1.ConditionFalse, returnErr)
 			instance.Status.Phase = statusutil.PhaseClusterExpanding
 			conditionsv1.SetStatusCondition(&instance.Status.Conditions, conditionsv1.Condition{
 				Type:    conditionsv1.ConditionUpgradeable,
@@ -508,35 +503,37 @@ func (r *StorageClusterReconciler) reconcilePhases(
 		if instance.Status.Phase != statusutil.PhaseClusterExpanding {
 			instance.Status.Phase = statusutil.PhaseReady
 
-			var returnErr error
-			var notUpgradeableReasons, notUpgradeableMessages []string
-			// mark operator upgradeable if and only if all storageclusters are ready
-			if !r.clusters.AreOtherStorageClustersReady(instance) {
-				notUpgradeableReasons = append(notUpgradeableReasons, "NotReady")
-				notUpgradeableMessages = append(notUpgradeableMessages, "StorageCluster is not ready")
-			}
-			// check operator upgradeability based on connected clients
-			if instance.Spec.AllowRemoteStorageConsumers {
-				if count, err := getUnsupportedClientsCount(r, instance.Namespace); err != nil {
-					notUpgradeableReasons = append(notUpgradeableReasons, "ODFClients")
-					notUpgradeableMessages = append(notUpgradeableMessages, "Unable to determine status of connected ODF Clients")
-				} else if count != 0 {
-					notUpgradeableReasons = append(notUpgradeableReasons, "ODFClients")
-					notUpgradeableMessages = append(notUpgradeableMessages, fmt.Sprintf("%d connected ODF Client Operators are not up to date", count))
+			/*
+				var returnErr error
+				var notUpgradeableReasons, notUpgradeableMessages []string
+				// mark operator upgradeable if and only if all storageclusters are ready
+				if !r.clusters.AreOtherStorageClustersReady(instance) {
+					notUpgradeableReasons = append(notUpgradeableReasons, "NotReady")
+					notUpgradeableMessages = append(notUpgradeableMessages, "StorageCluster is not ready")
 				}
-			}
-			if len(notUpgradeableMessages) > 0 {
-				// we are not upgradeable
-				returnErr = r.SetOperatorConditions(
-					strings.Join(notUpgradeableMessages, ";"), strings.Join(notUpgradeableReasons, ";"),
-					metav1.ConditionFalse, nil)
-			} else {
-				// we are upgradeable
-				returnErr = r.SetOperatorConditions(message, reason, metav1.ConditionTrue, nil)
-			}
-			if returnErr != nil {
-				return reconcile.Result{}, returnErr
-			}
+				// check operator upgradeability based on connected clients
+				if instance.Spec.AllowRemoteStorageConsumers {
+					if count, err := getUnsupportedClientsCount(r, instance.Namespace); err != nil {
+						notUpgradeableReasons = append(notUpgradeableReasons, "ODFClients")
+						notUpgradeableMessages = append(notUpgradeableMessages, "Unable to determine status of connected ODF Clients")
+					} else if count != 0 {
+						notUpgradeableReasons = append(notUpgradeableReasons, "ODFClients")
+						notUpgradeableMessages = append(notUpgradeableMessages, fmt.Sprintf("%d connected ODF Client Operators are not up to date", count))
+					}
+				}
+					if len(notUpgradeableMessages) > 0 {
+						// we are not upgradeable
+						returnErr = r.SetOperatorConditions(
+							strings.Join(notUpgradeableMessages, ";"), strings.Join(notUpgradeableReasons, ";"),
+							metav1.ConditionFalse, nil)
+					} else {
+						// we are upgradeable
+						returnErr = r.SetOperatorConditions(message, reason, metav1.ConditionTrue, nil)
+					}
+				if returnErr != nil {
+					return reconcile.Result{}, returnErr
+				}
+			*/
 		}
 	} else {
 		// If any component operator reports negatively we want to write that to
@@ -561,12 +558,12 @@ func (r *StorageClusterReconciler) reconcilePhases(
 		})
 
 		// If for any reason we marked ourselves !upgradeable...then unset readiness
-		if conditionsv1.IsStatusConditionFalse(instance.Status.Conditions, conditionsv1.ConditionUpgradeable) {
-			returnErr := r.SetOperatorConditions("StorageCluster is not ready.", "NotReady", metav1.ConditionFalse, nil)
-			if returnErr != nil {
-				return reconcile.Result{}, returnErr
-			}
-		}
+		//if conditionsv1.IsStatusConditionFalse(instance.Status.Conditions, conditionsv1.ConditionUpgradeable) {
+		//	returnErr := r.SetOperatorConditions("StorageCluster is not ready.", "NotReady", metav1.ConditionFalse, nil)
+		//	if returnErr != nil {
+		//		return reconcile.Result{}, returnErr
+		//	}
+		//}
 		if instance.Status.Phase != statusutil.PhaseClusterExpanding &&
 			!instance.Spec.ExternalStorage.Enable {
 			if conditionsv1.IsStatusConditionTrue(instance.Status.Conditions, conditionsv1.ConditionProgressing) {
@@ -657,6 +654,7 @@ func versionCheck(sc *ocsv1.StorageCluster, reqLogger logr.Logger) error {
 	return nil
 }
 
+/*
 func (r *StorageClusterReconciler) SetOperatorConditions(message string, reason string, isUpgradeable metav1.ConditionStatus, prevError error) error {
 	prevError = client.IgnoreNotFound(prevError)
 	operatorConditionErr := r.OperatorCondition.Set(context.TODO(), isUpgradeable, conditions.Option(conditions.WithMessage(message)), conditions.Option(conditions.WithReason(reason)))
@@ -671,6 +669,7 @@ func (r *StorageClusterReconciler) SetOperatorConditions(message string, reason 
 		return operatorConditionErr
 	}
 }
+*/
 
 // validateStorageDeviceSets checks the StorageDeviceSets of the given
 // StorageCluster for completeness and correctness
@@ -864,6 +863,7 @@ func validateCustomStorageClassNames(sc *ocsv1.StorageCluster) error {
 	return nil
 }
 
+/*
 func getUnsupportedClientsCount(r *StorageClusterReconciler, namespace string) (int, error) {
 	scList := &ocsv1alpha1.StorageConsumerList{}
 	err := r.Client.List(r.ctx, scList, client.InNamespace(namespace))
@@ -888,3 +888,4 @@ func getUnsupportedClientsCount(r *StorageClusterReconciler, namespace string) (
 
 	return count, nil
 }
+*/
