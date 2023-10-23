@@ -48,7 +48,7 @@ spec:
           - name: SINGLE_NODE
             value: "true"
           - name: SKIP_NOOBAA_CRD_WATCH
-            value: "false"
+            value: "true"
           - name: WATCH_NAMESPACE
             valueFrom:
               fieldRef:
