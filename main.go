@@ -25,7 +25,8 @@ import (
 
 	nadscheme "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/client/clientset/versioned/scheme"
 	snapapi "github.com/kubernetes-csi/external-snapshotter/client/v6/apis/volumesnapshot/v1"
-	nbapis "github.com/noobaa/noobaa-operator/v5/pkg/apis"
+
+	//nbapis "github.com/noobaa/noobaa-operator/v5/pkg/apis"
 	openshiftConfigv1 "github.com/openshift/api/config/v1"
 	quotav1 "github.com/openshift/api/quota/v1"
 	routev1 "github.com/openshift/api/route/v1"
@@ -78,7 +79,7 @@ func init() {
 	utilruntime.Must(ocsv1.AddToScheme(scheme))
 	utilruntime.Must(cephv1.AddToScheme(scheme))
 	utilruntime.Must(storagev1.AddToScheme(scheme))
-	utilruntime.Must(nbapis.AddToScheme(scheme))
+	//utilruntime.Must(nbapis.AddToScheme(scheme))
 	utilruntime.Must(monitoringv1.AddToScheme(scheme))
 	utilruntime.Must(batchv1.AddToScheme(scheme))
 	utilruntime.Must(corev1.AddToScheme(scheme))
