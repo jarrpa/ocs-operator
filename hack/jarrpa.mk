@@ -14,7 +14,7 @@ TEST_DEPLOY_DIR ?= upgrade-testing
 RBAC_PROXY_IMG ?= gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
 
 IMAGE_REGISTRY ?= quay.io
-IMAGE_TAG ?= latest
+IMAGE_TAG ?= hci
 REGISTRY_NAMESPACE ?= jarrpa
 OPERATOR_IMAGE_NAME ?= ocs-operator
 OPERATOR_INDEX_NAME ?= odf-operator-catalog

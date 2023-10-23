@@ -56,7 +56,7 @@ metadata:
       ]
     capabilities: Deep Insights
     categories: Storage
-    containerImage: quay.io/jarrpa/ocs-operator:latest
+    containerImage: quay.io/jarrpa/ocs-operator:hci
     description: Red Hat OpenShift Container Storage provides hyperconverged storage
       for applications within an OpenShift cluster.
     external.features.ocs.openshift.io/export-script: |-
@@ -3087,12 +3087,12 @@ spec:
                 - name: NOOBAA_DB_IMAGE
                   value: docker.io/centos/postgresql-12-centos8
                 - name: PROVIDER_API_SERVER_IMAGE
-                  value: quay.io/jarrpa/ocs-operator:latest
+                  value: quay.io/jarrpa/ocs-operator:hci
                 - name: OPERATOR_NAMESPACE
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.namespace
-                image: quay.io/jarrpa/ocs-operator:latest
+                image: quay.io/jarrpa/ocs-operator:hci
                 imagePullPolicy: Always
                 name: ocs-operator
                 readinessProbe:
@@ -3304,7 +3304,7 @@ spec:
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.namespace
-                image: quay.io/jarrpa/ocs-metrics-exporter:latest
+                image: quay.io/jarrpa/ocs-metrics-exporter:hci
                 name: ocs-metrics-exporter
                 ports:
                 - containerPort: 8080
@@ -3664,8 +3664,8 @@ spec:
     name: ceph-container
   - image: quay.io/csiaddons/k8s-sidecar:v0.6.0
     name: csiaddons-sidecar
-  - image: quay.io/jarrpa/ocs-must-gather:latest
+  - image: quay.io/jarrpa/ocs-must-gather:hci
     name: ocs-must-gather
-  - image: quay.io/jarrpa/ocs-metrics-exporter:latest
+  - image: quay.io/jarrpa/ocs-metrics-exporter:hci
     name: ocs-metrics-exporter
   version: 4.15.0
