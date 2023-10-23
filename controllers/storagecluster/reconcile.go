@@ -17,7 +17,6 @@ import (
 	"github.com/red-hat-storage/ocs-operator/v4/version"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -382,10 +381,10 @@ func (r *StorageClusterReconciler) reconcilePhases(
 		r.Log.Info("StorageCluster is terminated, skipping reconciliation.", "StorageCluster", klog.KRef(instance.Namespace, instance.Name))
 
 		// mark operator upgradeable if and only if all other storageclusters are ready or current cluster is the last cluster
-		if r.clusters.AreOtherStorageClustersReady(instance) {
-			returnErr := r.SetOperatorConditions("Skipping StorageCluster reconciliation", "Terminated", metav1.ConditionTrue, nil)
-			return reconcile.Result{}, returnErr
-		}
+		//if r.clusters.AreOtherStorageClustersReady(instance) {
+		//	returnErr := r.SetOperatorConditions("Skipping StorageCluster reconciliation", "Terminated", metav1.ConditionTrue, nil)
+		//	return reconcile.Result{}, returnErr
+		//}
 
 		return reconcile.Result{}, nil
 	}
@@ -419,7 +418,7 @@ func (r *StorageClusterReconciler) reconcilePhases(
 				&ocsSnapshotClass{},
 				&ocsJobTemplates{},
 				&ocsCephRbdMirrors{},
-				&ocsClusterClaim{},
+				//&ocsClusterClaim{},
 			}
 		} else {
 			// noobaa-only ensure functions
@@ -437,7 +436,7 @@ func (r *StorageClusterReconciler) reconcilePhases(
 			&ocsCephCluster{},
 			&ocsSnapshotClass{},
 			//&ocsNoobaaSystem{},
-			&ocsClusterClaim{},
+			//&ocsClusterClaim{},
 		}
 	}
 
@@ -446,7 +445,7 @@ func (r *StorageClusterReconciler) reconcilePhases(
 		if r.phase == statusutil.PhaseClusterExpanding {
 			message := "StorageCluster is expanding"
 			reason := "Expanding"
-			returnErr = r.SetOperatorConditions(message, reason, metav1.ConditionFalse, returnErr)
+			//returnErr = r.SetOperatorConditions(message, reason, metav1.ConditionFalse, returnErr)
 			instance.Status.Phase = statusutil.PhaseClusterExpanding
 			conditionsv1.SetStatusCondition(&instance.Status.Conditions, conditionsv1.Condition{
 				Type:    conditionsv1.ConditionUpgradeable,
@@ -498,12 +497,12 @@ func (r *StorageClusterReconciler) reconcilePhases(
 			instance.Status.Phase = statusutil.PhaseReady
 
 			// mark operator upgradeable if and only if all storageclusters are ready
-			if r.clusters.AreOtherStorageClustersReady(instance) {
-				returnErr := r.SetOperatorConditions(message, reason, metav1.ConditionTrue, nil)
-				if returnErr != nil {
-					return reconcile.Result{}, returnErr
-				}
-			}
+			//if r.clusters.AreOtherStorageClustersReady(instance) {
+			//	returnErr := r.SetOperatorConditions(message, reason, metav1.ConditionTrue, nil)
+			//	if returnErr != nil {
+			//		return reconcile.Result{}, returnErr
+			//	}
+			//}
 			return reconcile.Result{}, nil
 
 		}
@@ -530,12 +529,12 @@ func (r *StorageClusterReconciler) reconcilePhases(
 		})
 
 		// If for any reason we marked ourselves !upgradeable...then unset readiness
-		if conditionsv1.IsStatusConditionFalse(instance.Status.Conditions, conditionsv1.ConditionUpgradeable) {
-			returnErr := r.SetOperatorConditions("StorageCluster is not ready.", "NotReady", metav1.ConditionFalse, nil)
-			if returnErr != nil {
-				return reconcile.Result{}, returnErr
-			}
-		}
+		//if conditionsv1.IsStatusConditionFalse(instance.Status.Conditions, conditionsv1.ConditionUpgradeable) {
+		//	returnErr := r.SetOperatorConditions("StorageCluster is not ready.", "NotReady", metav1.ConditionFalse, nil)
+		//	if returnErr != nil {
+		//		return reconcile.Result{}, returnErr
+		//	}
+		//}
 		if instance.Status.Phase != statusutil.PhaseClusterExpanding &&
 			!instance.Spec.ExternalStorage.Enable {
 			if conditionsv1.IsStatusConditionTrue(instance.Status.Conditions, conditionsv1.ConditionProgressing) {
