@@ -201,18 +201,19 @@ rosa-get-bin: ##
 	curl --progress-bar -L https://mirror.openshift.com/pub/openshift-v4/clients/rosa/latest/rosa-linux.tar.gz | tar -xz -C $(OCP_BINDIR);
 
 CLUSTER_NAME ?= jarrpa-dev
-rosa-create-cluster: ##
-	time bash -c "rosa create cluster --cluster-name $(CLUSTER_NAME) --sts --role-arn arn:aws:iam::495507785675:role/ManagedOpenShift-HCP-ROSA-Installer-Role --support-role-arn arn:aws:iam::495507785675:role/ManagedOpenShift-HCP-ROSA-Support-Role --worker-iam-role arn:aws:iam::495507785675:role/ManagedOpenShift-HCP-ROSA-Worker-Role --operator-roles-prefix jarrpa-dev-hcp --oidc-config-id 2636ge0jjotldd7jtk6h3loqu4fb87k8 --region us-east-2 --version 4.13.10 --replicas 3 --compute-machine-type m5.4xlarge --machine-cidr 10.0.0.0/16 --service-cidr 172.30.0.0/16 --pod-cidr 10.128.0.0/14 --host-prefix 23 --subnet-ids subnet-0f2dedaee9188451f,subnet-0c2556315c28b86d0,subnet-05ee9306ebafe4040,subnet-0284e507139b383bf,subnet-0d158a843904e7926,subnet-0e5db264c35513678 --hosted-cp; rosa logs install -c $(CLUSTER_NAME) --watch"
+CLUSTER_VERSION ?= 4.14.1
+rosa-create-cluster: ## Create ROSA cluster <CLUSTER_NAME> with version <CLUSTER_VERSION>
+	time bash -c "rosa create cluster --cluster-name $(CLUSTER_NAME) --sts --role-arn arn:aws:iam::495507785675:role/ManagedOpenShift-HCP-ROSA-Installer-Role --support-role-arn arn:aws:iam::495507785675:role/ManagedOpenShift-HCP-ROSA-Support-Role --worker-iam-role arn:aws:iam::495507785675:role/ManagedOpenShift-HCP-ROSA-Worker-Role --operator-roles-prefix jarrpa-dev-hcp --oidc-config-id 2636ge0jjotldd7jtk6h3loqu4fb87k8 --region us-east-2 --version $(CLUSTER_VERSION) --replicas 3 --compute-machine-type m5.4xlarge --machine-cidr 10.0.0.0/16 --service-cidr 172.30.0.0/16 --pod-cidr 10.128.0.0/14 --host-prefix 23 --subnet-ids subnet-0f2dedaee9188451f,subnet-0c2556315c28b86d0,subnet-05ee9306ebafe4040,subnet-0284e507139b383bf,subnet-0d158a843904e7926,subnet-0e5db264c35513678 --hosted-cp; rosa logs install -c $(CLUSTER_NAME) --watch"
 
 CLUSTER_ADDR ?= ""
 CLUSTER_PASSWD ?= ""
-rosa-login-cluster: ##
+rosa-login-cluster: ## Login to ROSA cluster "<CLUSTER_NAME>.<CLUSTER_ADDR>.openshiftapps.com:6443" as cluster-admin with <CLUSTER_PASSWD>
 	while ! $(OCP_OC) login api.$(CLUSTER_NAME).$(CLUSTER_ADDR).openshiftapps.com:6443 --username cluster-admin --password "$(CLUSTER_PASSWD)"; do \
 		  echo "Retrying in 2..."; \
 		  sleep 2; \
 		done;
 
-rosa-delete-cluster: ##
+rosa-delete-cluster: ## Delete ROSA cluster <CLUSTER_NAME>
 	time bash -c "rosa delete cluster -y -c $(CLUSTER_NAME); rosa logs uninstall -c $(CLUSTER_NAME) --watch"
 
 #OCP_BIN_URL ?= https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest
