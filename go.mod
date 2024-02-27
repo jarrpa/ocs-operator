@@ -30,7 +30,9 @@ require (
 	github.com/prometheus-operator/prometheus-operator/pkg/client v0.72.0
 	github.com/red-hat-storage/ocs-client-operator v0.0.0-20240325165741-300e2b620f51
 	github.com/red-hat-storage/ocs-operator/api/v4 v4.0.0-20240327160100-bbe9d9d49462
+	github.com/rook/rook v1.13.7
 	github.com/rook/rook/pkg/apis v0.0.0-20240327231646-b6b89a012a95
+	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.9.0
 	go.uber.org/multierr v1.11.0
 	golang.org/x/net v0.23.0
@@ -93,6 +95,7 @@ require (
 	github.com/hashicorp/vault/api v1.12.2 // indirect
 	github.com/hashicorp/vault/api/auth/approle v0.6.0 // indirect
 	github.com/hashicorp/vault/api/auth/kubernetes v0.6.0 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kube-object-storage/lib-bucket-provisioner v0.0.0-20221122204822-d1a8c34382f1 // indirect
