@@ -28,8 +28,11 @@ require (
 	github.com/operator-framework/operator-lifecycle-manager v0.26.0
 	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.70.0
 	github.com/prometheus-operator/prometheus-operator/pkg/client v0.70.0
+	github.com/red-hat-storage/ocs-client-operator v0.0.0-20240216124345-1b9b7fb23b8d
 	github.com/red-hat-storage/ocs-operator/api/v4 v4.0.0-00010101000000-000000000000
+	github.com/rook/rook v1.13.5
 	github.com/rook/rook/pkg/apis v0.0.0-20231215165123-32de0fb5f69b
+	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/multierr v1.11.0
 	golang.org/x/net v0.19.0
@@ -91,6 +94,7 @@ require (
 	github.com/hashicorp/vault/api v1.10.0 // indirect
 	github.com/hashicorp/vault/api/auth/approle v0.5.0 // indirect
 	github.com/hashicorp/vault/api/auth/kubernetes v0.5.0 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kube-object-storage/lib-bucket-provisioner v0.0.0-20221122204822-d1a8c34382f1 // indirect
