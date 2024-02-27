@@ -35,7 +35,7 @@ require (
 	github.com/prometheus/client_model v0.5.0
 	github.com/red-hat-storage/ocs-operator/api/v4 v4.0.0-20231223214930-988b6e4b40e0
 	github.com/red-hat-storage/ocs-operator/v4 v4.0.0-00010101000000-000000000000
-	github.com/rook/rook v1.13.1
+	github.com/rook/rook v1.13.5
 	github.com/rook/rook/pkg/apis v0.0.0-20231226081419-213dfaadde70
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.4
