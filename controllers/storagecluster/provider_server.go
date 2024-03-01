@@ -496,7 +496,11 @@ func (o *ocsProviderServer) createJob(r *StorageClusterReconciler, instance *ocs
 
 	if errors.IsNotFound(err) {
 		onboardingSecretGeneratorJob := getOnboardingJobObject(instance)
-		err = r.Client.Create(context.Background(), onboardingSecretGeneratorJob)
+		jobErr := r.Client.Create(context.Background(), onboardingSecretGeneratorJob)
+		if jobErr != nil && !errors.IsAlreadyExists(jobErr) {
+			r.Log.Error(jobErr, "failed to create onboarding job")
+			return reconcile.Result{}, jobErr
+		}
 	}
 	if err != nil {
 		r.Log.Error(err, "failed to create/ensure secret")
