@@ -100,11 +100,32 @@ func (obj *ocsCephRGWRoutes) ensureDeleted(r *StorageClusterReconciler, sc *ocsv
 
 // createCephObjectStore creates CephObjectStore in the desired state
 func (r *StorageClusterReconciler) createCephRGWRoutes(routes []*routev1.Route, instance *ocsv1.StorageCluster) error {
+	var err error
+
+	routeList := routev1.RouteList{}
+	err = r.Client.List(context.TODO(), &routeList)
+	if err != nil {
+		return err
+	}
+
 	for _, route := range routes {
-		existing := routev1.Route{}
-		err := r.Client.Get(context.TODO(), types.NamespacedName{Name: route.Name, Namespace: route.Namespace}, &existing)
-		switch {
-		case err == nil:
+		var existing routev1.Route
+		var routeFound bool
+
+		// Check for existing routes under different names
+		for _, foundRoute := range routeList.Items {
+			if foundRoute.Spec.To.Name == route.Spec.To.Name && foundRoute.Spec.Port.TargetPort.String() == route.Spec.Port.TargetPort.String() {
+				existing = foundRoute
+				routeFound = true
+				if foundRoute.Name != route.Name {
+					r.Log.Info("Using name of existing Ceph RGW Route", "CephRGWRoute", klog.KRef(foundRoute.Namespace, foundRoute.Name))
+					route.Name = foundRoute.Name
+					break
+				}
+			}
+		}
+
+		if routeFound {
 			reconcileStrategy := ReconcileStrategy(instance.Spec.ManagedResources.CephObjectStores.ReconcileStrategy)
 			if reconcileStrategy == ReconcileStrategyInit {
 				return nil
@@ -123,7 +144,7 @@ func (r *StorageClusterReconciler) createCephRGWRoutes(routes []*routev1.Route, 
 				r.Log.Error(err, "Failed to update Ceph RGW Route Object.", "CephRGWRoute", klog.KRef(route.Namespace, route.Name))
 				return err
 			}
-		case errors.IsNotFound(err):
+		} else {
 			r.Log.Info("Creating Ceph RGW Route.", "CephRGWRoute", klog.KRef(route.Namespace, route.Name))
 			err = r.Client.Create(context.TODO(), route)
 			if err != nil {
@@ -142,7 +163,7 @@ func (r *StorageClusterReconciler) newCephRGWRoutes(initData *ocsv1.StorageClust
 	ret := []*routev1.Route{
 		{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      generateNameForCephObjectStore(initData),
+				Name:      fmt.Sprintf("%s-rgw", initData.Name),
 				Namespace: initData.Namespace,
 			},
 			Spec: routev1.RouteSpec{
@@ -164,7 +185,7 @@ func (r *StorageClusterReconciler) newCephRGWRoutes(initData *ocsv1.StorageClust
 		},
 		{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      generateNameForCephObjectStore(initData) + "-secure",
+				Name:      fmt.Sprintf("%s-rgw-ssl", initData.Name),
 				Namespace: initData.Namespace,
 			},
 			Spec: routev1.RouteSpec{
