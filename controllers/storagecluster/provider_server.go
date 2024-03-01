@@ -486,6 +486,10 @@ func getOnboardingJobObject(instance *ocsv1.StorageCluster) *batchv1.Job {
 									Name:  util.OperatorNamespaceEnvVar,
 									Value: os.Getenv(util.OperatorNamespaceEnvVar),
 								},
+								{
+									Name:  "STORAGE_CLUSTER_NAME",
+									Value: instance.Name,
+								},
 							},
 						},
 					},

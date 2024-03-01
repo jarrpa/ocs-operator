@@ -5,6 +5,8 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"flag"
+	"os"
 
 	v1 "github.com/red-hat-storage/ocs-operator/api/v4/v1"
 	"github.com/red-hat-storage/ocs-operator/v4/controllers/util"
@@ -23,10 +25,18 @@ const (
 	// Name of existing public key which is used ocs-operator
 	onboardingValidationPublicKeySecretName  = "onboarding-ticket-key"
 	onboardingValidationPrivateKeySecretName = "onboarding-private-key"
-	storageClusterName                       = "ocs-storagecluster"
 )
 
+var storageClusterName string
+
 func main() {
+	flag.StringVar(&storageClusterName, "storage-cluster-name", "ocs-storagecluster", "The name of the provider StorageCluster.")
+	flag.Parse()
+
+	if scName := os.Getenv("STORAGE_CLUSTER_NAME"); scName != "" {
+		storageClusterName = scName
+	}
+
 	cl, err := newClient()
 	if err != nil {
 		klog.Exitf("failed to create client: %v", err)
