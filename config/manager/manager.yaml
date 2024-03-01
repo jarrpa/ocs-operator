@@ -45,6 +45,8 @@ spec:
         imagePullPolicy: Always
         name: ocs-operator
         env:
+          - name: SINGLE_NODE
+            value: "true"
           - name: SKIP_NOOBAA_CRD_WATCH
             value: "false"
           - name: WATCH_NAMESPACE

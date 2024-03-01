@@ -7,6 +7,12 @@ spec:
   labelSelector: {}
   manageNodes: false
   managedResources: {}
+  monPVCTemplate:
+    spec:
+      storageClassName: lvms-vg1
+      resources:
+        requests:
+          storage: 2Gi
   multiCloudGateway:
     reconcileStrategy: ignore
   network:
@@ -26,17 +32,17 @@ spec:
     rgw: {}
   storageDeviceSets:
   - name: example-deviceset
-    count: 1
-    replica: 3
+    count: 3
+    replica: 1
     resources: {}
     placement: {}
     dataPVCTemplate:
       spec:
-        storageClassName: gp3-csi
+        storageClassName: lvms-vg1
         accessModes:
         - ReadWriteOnce
         volumeMode: Block
         resources:
           requests:
-            storage: 1Ti
+            storage: 1Gi
     portable: true

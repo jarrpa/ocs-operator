@@ -23,6 +23,16 @@ metadata:
             "labelSelector": {},
             "manageNodes": false,
             "managedResources": {},
+            "monPVCTemplate": {
+              "spec": {
+                "resources": {
+                  "requests": {
+                    "storage": "2Gi"
+                  }
+                },
+                "storageClassName": "lvms-vg1"
+              }
+            },
             "multiCloudGateway": {
               "reconcileStrategy": "ignore"
             },
@@ -47,7 +57,7 @@ metadata:
             },
             "storageDeviceSets": [
               {
-                "count": 1,
+                "count": 3,
                 "dataPVCTemplate": {
                   "spec": {
                     "accessModes": [
@@ -55,17 +65,17 @@ metadata:
                     ],
                     "resources": {
                       "requests": {
-                        "storage": "1Ti"
+                        "storage": "1Gi"
                       }
                     },
-                    "storageClassName": "gp3-csi",
+                    "storageClassName": "lvms-vg1",
                     "volumeMode": "Block"
                   }
                 },
                 "name": "example-deviceset",
                 "placement": {},
                 "portable": true,
-                "replica": 3,
+                "replica": 1,
                 "resources": {}
               }
             ]
@@ -572,6 +582,8 @@ spec:
                 command:
                 - ocs-operator
                 env:
+                - name: SINGLE_NODE
+                  value: "true"
                 - name: SKIP_NOOBAA_CRD_WATCH
                   value: "false"
                 - name: WATCH_NAMESPACE
