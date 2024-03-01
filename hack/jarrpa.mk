@@ -5,12 +5,12 @@ PROJECT_DIR := $(PWD)
 OCP_DIR ?= /home/jrivera/ocp/jarrpa-dev
 OCP_BINDIR ?= /home/jrivera/ocp/jarrpa-dev/bin
 OCP_CLUSTER_CONFIG ?= $(OCP_DIR)/install-config-aws-ocs-osd.yaml
-OCP_CLUSTER_CONFIG_DIR ?= $(OCP_DIR)/aws-dev
+OCP_CLUSTER_CONFIG_DIR ?= $(OCP_DIR)/sno-dev-vm
 OCP_INSTALLER ?= $(OCP_DIR)/bin/openshift-install
 OCP_OC ?= $(OCP_BINDIR)/oc
 OCS_OC_PATH ?= $(OCP_OC)
 KUBECTL ?= $(OCP_BINDIR)/kubectl
-#KUBECONFIG ?= $(OCP_CLUSTER_CONFIG_DIR)/auth/kubeconfig
+KUBECONFIG ?= $(OCP_CLUSTER_CONFIG_DIR)/kubeconfig-noingress-sno-dev
 TEST_DEPLOY_DIR ?= upgrade-testing
 
 RBAC_PROXY_IMG ?= gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
