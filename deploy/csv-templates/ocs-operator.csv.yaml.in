@@ -590,7 +590,7 @@ spec:
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.annotations['olm.targetNamespaces']
-                image: quay.io/jarrpa/ocs-operator:latest
+                image: quay.io/jarrpa/ocs-operator:rns-dev
                 imagePullPolicy: Always
                 name: ocs-operator
                 readinessProbe:

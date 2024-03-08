@@ -54,7 +54,7 @@ spec:
               fieldRef:
                 fieldPath: metadata.namespace
           - name: OCS_METRICS_EXPORTER_IMAGE
-            value: quay.io/jarrpa/ocs-metrics-exporter:latest
+            value: quay.io/jarrpa/ocs-metrics-exporter:rns-dev
           - name: ROOK_CEPH_IMAGE
             value: docker.io/rook/ceph:v1.13.5
           - name: CEPH_IMAGE
@@ -64,9 +64,9 @@ spec:
           - name: NOOBAA_DB_IMAGE
             value: centos/postgresql-12-centos8
           - name: PROVIDER_API_SERVER_IMAGE
-            value: quay.io/jarrpa/ocs-operator:latest
+            value: quay.io/jarrpa/ocs-operator:rns-dev
           - name: ONBOARDING_VALIDATION_KEYS_GENERATOR_IMAGE
-            value: quay.io/jarrpa/ocs-operator:latest
+            value: quay.io/jarrpa/ocs-operator:rns-dev
           - name: OPERATOR_NAMESPACE
             valueFrom:
               fieldRef:
