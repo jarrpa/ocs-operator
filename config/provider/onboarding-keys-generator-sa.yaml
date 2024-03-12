@@ -1,5 +1,5 @@
 kind: ServiceAccount
 apiVersion: v1
 metadata:
-  name: onboarding-secret-generator
+  name: onboarding-validation-keys-generator
   namespace: system
