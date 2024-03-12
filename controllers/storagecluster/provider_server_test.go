@@ -368,7 +368,9 @@ func GetProviderAPIServerDeploymentForTest(instance *ocsv1.StorageCluster) *apps
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Labels: map[string]string{
-						"app": "ocsProviderApiServer",
+						"app.kubernetes.io/name":      "ocs",
+						"app.kubernetes.io/component": "provider-api-server",
+						"app":                         "ocsProviderApiServer",
 					},
 				},
 				Spec: corev1.PodSpec{

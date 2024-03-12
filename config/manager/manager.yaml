@@ -16,17 +16,23 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: controller-manager
+  labels:
+    operator: ocs
+    app.kubernetes.io/name: ocs
+    app.kubernetes.io/component: operator
 spec:
   selector:
     matchLabels:
-      name: controller-manager
+      operator: ocs
   replicas: 1
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        name: controller-manager
+        operator: ocs
+        app.kubernetes.io/name: ocs
+        app.kubernetes.io/component: operator
     spec:
       serviceAccountName: controller-manager
       containers:

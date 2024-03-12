@@ -8,7 +8,7 @@ spec:
     matchLabels:
       app: ux-backend-server
       app.kubernetes.io/component: ux-backend-server
-      app.kubernetes.io/name: ux-backend-server
+      app.kubernetes.io/name: ocs
   strategy:
     type: Recreate
   template:
@@ -16,7 +16,7 @@ spec:
       labels:
         app: ux-backend-server
         app.kubernetes.io/component: ux-backend-server
-        app.kubernetes.io/name: ux-backend-server
+        app.kubernetes.io/name: ocs
     spec:
       containers:
       - command:

@@ -36,8 +36,8 @@ const (
 )
 
 var exporterLabels = map[string]string{
-	componentLabel: metricsExporterName,
-	nameLabel:      metricsExporterName,
+	componentLabel: "metrics-exporter",
+	nameLabel:      "ocs",
 }
 
 // enableMetricsExporter function start metrics exporter deployment
