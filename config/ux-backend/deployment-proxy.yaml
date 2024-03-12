@@ -26,7 +26,7 @@ spec:
         - name: UX_BACKEND_PORT
         - name: TLS_ENABLED
         image: controller
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         name: ux-backend-server
         ports:
         - containerPort: 8080
@@ -49,7 +49,7 @@ spec:
         - -openshift-delegate-urls={"/":{"group":"ocs.openshift.io","resource":"storageclusters","namespace":"openshift-storage","verb":"create"}}
         - -openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
         image: quay.io/openshift/origin-oauth-proxy:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         name: oauth-proxy
         ports:
         - containerPort: 8888
