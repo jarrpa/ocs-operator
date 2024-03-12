@@ -325,9 +325,10 @@ func deployMetricsExporter(ctx context.Context, r *StorageClusterReconciler, ins
 							"--namespaces", instance.Namespace,
 							"--ceph-auth-namespace", r.OperatorNamespace,
 						},
-						Command: []string{"/usr/local/bin/metrics-exporter"},
-						Image:   r.images.OCSMetricsExporter,
-						Name:    metricsExporterName,
+						Command:         []string{"/usr/local/bin/metrics-exporter"},
+						Image:           r.images.OCSMetricsExporter,
+						ImagePullPolicy: corev1.PullAlways,
+						Name:            metricsExporterName,
 						Ports: []corev1.ContainerPort{
 							{ContainerPort: 8080},
 							{ContainerPort: 8081},

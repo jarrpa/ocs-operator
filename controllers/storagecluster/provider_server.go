@@ -347,9 +347,10 @@ func GetProviderAPIServerDeployment(instance *ocsv1.StorageCluster) *appsv1.Depl
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{
 						{
-							Name:    "ocs-provider-api-server",
-							Image:   os.Getenv(providerAPIServerImage),
-							Command: []string{"/usr/local/bin/provider-api"},
+							Name:            "ocs-provider-api-server",
+							Image:           os.Getenv(providerAPIServerImage),
+							ImagePullPolicy: corev1.PullAlways,
+							Command:         []string{"/usr/local/bin/provider-api"},
 							Env: []corev1.EnvVar{
 								{
 									Name:  util.WatchNamespaceEnvVar,
