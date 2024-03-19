@@ -62,9 +62,6 @@ const (
 	ProviderOSDSizeInTiB = 4
 )
 
-var gp2 = "gp2"
-var volumeModeBlock = corev1.PersistentVolumeBlock
-
 // DefaultStorageCluster returns a default StorageCluster manifest
 func (t *DeployManager) DefaultStorageCluster() (*ocsv1.StorageCluster, error) {
 	arbiter := ocsv1.ArbiterSpec{}
