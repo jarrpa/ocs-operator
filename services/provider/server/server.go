@@ -20,7 +20,6 @@ import (
 	"github.com/red-hat-storage/ocs-operator/api/v4/v1alpha1"
 	ocsv1alpha1 "github.com/red-hat-storage/ocs-operator/api/v4/v1alpha1"
 	controllers "github.com/red-hat-storage/ocs-operator/v4/controllers/storageconsumer"
-	"github.com/red-hat-storage/ocs-operator/v4/controllers/util"
 	pb "github.com/red-hat-storage/ocs-operator/v4/services/provider/pb"
 	ocsVersion "github.com/red-hat-storage/ocs-operator/v4/version"
 	rookCephv1 "github.com/rook/rook/pkg/apis/ceph.rook.io/v1"
@@ -700,14 +699,15 @@ func (s *OCSProviderServer) ReportStatus(ctx context.Context, req *pb.ReportStat
 		return nil, status.Errorf(codes.Internal, "Failed to update lastHeartbeat payload in the storageConsumer resource: %v", err)
 	}
 
-	channelName, err := s.getOCSSubscriptionChannel(ctx)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to construct status response: %v", err)
-	}
+	//channelName, err := s.getOCSSubscriptionChannel(ctx)
+	//if err != nil {
+	//	return nil, status.Errorf(codes.Internal, "Failed to construct status response: %v", err)
+	//}
 
-	return &pb.ReportStatusResponse{DesiredClientOperatorChannel: channelName}, nil
+	return &pb.ReportStatusResponse{DesiredClientOperatorChannel: ""}, nil
 }
 
+/*
 func (s *OCSProviderServer) getOCSSubscriptionChannel(ctx context.Context) (string, error) {
 	subscriptionList := &opv1a1.SubscriptionList{}
 	err := s.client.List(ctx, subscriptionList, client.InNamespace(s.namespace))
@@ -722,3 +722,4 @@ func (s *OCSProviderServer) getOCSSubscriptionChannel(ctx context.Context) (stri
 	}
 	return subscription.Spec.Channel, nil
 }
+*/
