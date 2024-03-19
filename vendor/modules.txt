@@ -188,6 +188,9 @@ github.com/hashicorp/vault/api/auth/kubernetes
 # github.com/imdario/mergo v0.3.16
 ## explicit; go 1.13
 github.com/imdario/mergo
+# github.com/inconshreveable/mousetrap v1.1.0
+## explicit; go 1.18
+github.com/inconshreveable/mousetrap
 # github.com/josharian/intern v1.0.0
 ## explicit; go 1.5
 github.com/josharian/intern
@@ -389,6 +392,11 @@ github.com/red-hat-storage/ocs-client-operator/api/v1alpha1
 ## explicit; go 1.21
 github.com/red-hat-storage/ocs-operator/api/v4/v1
 github.com/red-hat-storage/ocs-operator/api/v4/v1alpha1
+# github.com/rook/rook v1.13.7
+## explicit; go 1.20
+github.com/rook/rook/pkg/client/clientset/versioned
+github.com/rook/rook/pkg/client/clientset/versioned/scheme
+github.com/rook/rook/pkg/client/clientset/versioned/typed/ceph.rook.io/v1
 # github.com/rook/rook/pkg/apis v0.0.0-20240327231646-b6b89a012a95
 ## explicit; go 1.21
 github.com/rook/rook/pkg/apis/ceph.rook.io
@@ -399,6 +407,9 @@ github.com/ryanuber/go-glob
 # github.com/sirupsen/logrus v1.9.3
 ## explicit; go 1.13
 github.com/sirupsen/logrus
+# github.com/spf13/cobra v1.8.0
+## explicit; go 1.15
+github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.5
 ## explicit; go 1.12
 github.com/spf13/pflag
