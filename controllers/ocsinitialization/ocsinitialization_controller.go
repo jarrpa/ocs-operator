@@ -426,11 +426,12 @@ func (r *OCSInitializationReconciler) getCsiTolerations(csiTolerationKey string)
 // When any value in the configmap is updated, the rook-ceph-operator pod is restarted to pick up the new values.
 func (r *OCSInitializationReconciler) ensureOcsOperatorConfigExists(initialData *ocsv1.OCSInitialization) error {
 	ocsOperatorConfigData := map[string]string{
-		util.ClusterNameKey:              util.GetClusterID(r.ctx, r.Client, &r.Log),
-		util.RookCurrentNamespaceOnlyKey: strconv.FormatBool(!(len(r.clusters.GetStorageClusters()) > 1)),
-		util.EnableTopologyKey:           r.getEnableTopologyKeyValue(),
-		util.TopologyDomainLabelsKey:     r.getTopologyDomainLabelsKeyValue(),
-		util.EnableNFSKey:                r.getEnableNFSKeyValue(),
+		util.ClusterNameKey:                 util.GetClusterID(r.ctx, r.Client, &r.Log),
+		util.RookCurrentNamespaceOnlyKey:    strconv.FormatBool(!(len(r.clusters.GetStorageClusters()) > 1)),
+		util.EnableTopologyKey:              r.getEnableTopologyKeyValue(),
+		util.TopologyDomainLabelsKey:        r.getTopologyDomainLabelsKeyValue(),
+		util.EnableNFSKey:                   r.getEnableNFSKeyValue(),
+		"ROOK_OBC_WATCH_OPERATOR_NAMESPACE": "false",
 	}
 
 	ocsOperatorConfig := &corev1.ConfigMap{
