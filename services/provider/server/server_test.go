@@ -219,14 +219,17 @@ func TestGetExternalResources(t *testing.T) {
 
 	for i := range storageConRes.ExternalResource {
 		extResource := storageConRes.ExternalResource[i]
-		mockResoruce, ok := mockExtR[extResource.Name]
-		assert.True(t, ok)
+		mockResource, ok := mockExtR[extResource.Name]
+		if !ok {
+			assert.Failf(t, "resource not found", "%s: %s", extResource.Kind, extResource.Name)
+			continue
+		}
 
-		data, err := json.Marshal(mockResoruce.Data)
+		data, err := json.Marshal(mockResource.Data)
 		assert.NoError(t, err)
 		assert.Equal(t, string(extResource.Data), string(data))
-		assert.Equal(t, extResource.Kind, mockResoruce.Kind)
-		assert.Equal(t, extResource.Name, mockResoruce.Name)
+		assert.Equal(t, extResource.Kind, mockResource.Kind)
+		assert.Equal(t, extResource.Name, mockResource.Name)
 	}
 
 	// When ocsv1alpha1.StorageConsumerStateReady but ceph resources is empty
@@ -854,14 +857,17 @@ func TestOCSProviderServerGetStorageClaimConfig(t *testing.T) {
 		} else if extResource.Kind == "StorageClass" {
 			name = fmt.Sprintf("%s-storageclass", name)
 		}
-		mockResoruce, ok := mockBlockPoolClaimExtR[name]
-		assert.True(t, ok)
+		mockResource, ok := mockBlockPoolClaimExtR[name]
+		if !ok {
+			assert.Failf(t, "resource not found", "%s: %s", extResource.Kind, name)
+			continue
+		}
 
-		data, err := json.Marshal(mockResoruce.Data)
+		data, err := json.Marshal(mockResource.Data)
 		assert.NoError(t, err)
 		assert.Equal(t, string(extResource.Data), string(data))
-		assert.Equal(t, extResource.Kind, mockResoruce.Kind)
-		assert.Equal(t, extResource.Name, mockResoruce.Name)
+		assert.Equal(t, extResource.Kind, mockResource.Kind)
+		assert.Equal(t, extResource.Name, mockResource.Name)
 	}
 
 	// get the storage class request config for share filesystem
@@ -881,14 +887,17 @@ func TestOCSProviderServerGetStorageClaimConfig(t *testing.T) {
 		} else if extResource.Kind == "StorageClass" {
 			name = fmt.Sprintf("%s-storageclass", name)
 		}
-		mockResoruce, ok := mockShareFilesystemClaimExtR[name]
-		assert.True(t, ok)
+		mockResource, ok := mockShareFilesystemClaimExtR[name]
+		if !ok {
+			assert.Failf(t, "resource not found", "%s: %s", extResource.Kind, name)
+			continue
+		}
 
-		data, err := json.Marshal(mockResoruce.Data)
+		data, err := json.Marshal(mockResource.Data)
 		assert.NoError(t, err)
 		assert.Equal(t, string(extResource.Data), string(data))
-		assert.Equal(t, extResource.Kind, mockResoruce.Kind)
-		assert.Equal(t, extResource.Name, mockResoruce.Name)
+		assert.Equal(t, extResource.Kind, mockResource.Kind)
+		assert.Equal(t, extResource.Name, mockResource.Name)
 	}
 
 	// When ceph resources is empty
