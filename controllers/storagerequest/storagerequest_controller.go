@@ -26,6 +26,7 @@ import (
 	"github.com/red-hat-storage/ocs-operator/api/v4/v1alpha1"
 	controllers "github.com/red-hat-storage/ocs-operator/v4/controllers/storageconsumer"
 	"github.com/red-hat-storage/ocs-operator/v4/controllers/util"
+	"github.com/red-hat-storage/ocs-operator/v4/pkg/operations"
 	rookCephv1 "github.com/rook/rook/pkg/apis/ceph.rook.io/v1"
 	storagev1 "k8s.io/api/storage/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -101,6 +102,11 @@ func (r *StorageRequestReconciler) Reconcile(ctx context.Context, request reconc
 		}
 		r.log.Error(err, "Failed to get StorageRequest.")
 		return reconcile.Result{}, err
+	}
+
+	if ops, ok := r.StorageRequest.Annotations[operations.PendingOperationsAnnotation]; ok && ops != "" {
+		r.log.Info("StorageRequest has operations pending, skipping reconciliation", "Operations", ops)
+		return reconcile.Result{}, nil
 	}
 
 	r.StorageRequest.Status.Phase = v1alpha1.StorageRequestInitializing
@@ -284,6 +290,9 @@ func (r *StorageRequestReconciler) initPhase() error {
 	r.cephResourcesByName = map[string]*v1alpha1.CephResourcesSpec{}
 
 	for _, cephResourceSpec := range r.StorageRequest.Status.CephResources {
+		if cephResourceSpec.Kind == "CephBlockPool" {
+			r.log.Info(fmt.Sprintf("StorageRequest %q is backed by a CephBlockPool, which is no longer supported. Please complete a data migration.", r.StorageRequest.Name))
+		}
 		r.cephResourcesByName[cephResourceSpec.Name] = cephResourceSpec
 	}
 
