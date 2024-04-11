@@ -16,6 +16,16 @@ github.com/cenkalti/backoff/v3
 # github.com/ceph/ceph-csi/api v0.0.0-20240322131550-063319f6e516
 ## explicit; go 1.21
 github.com/ceph/ceph-csi/api/deploy/ocp
+# github.com/ceph/go-ceph v0.26.0
+## explicit; go 1.19
+github.com/ceph/go-ceph/internal/callbacks
+github.com/ceph/go-ceph/internal/cutil
+github.com/ceph/go-ceph/internal/errutil
+github.com/ceph/go-ceph/internal/log
+github.com/ceph/go-ceph/internal/retry
+github.com/ceph/go-ceph/internal/timespec
+github.com/ceph/go-ceph/rados
+github.com/ceph/go-ceph/rbd
 # github.com/cespare/xxhash/v2 v2.2.0
 ## explicit; go 1.11
 github.com/cespare/xxhash/v2
