@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: ocs-operator-system
+namePrefix: ""
+resources:
+- resources/k8s-metrics-servicemonitor-role-binding.yaml
+- resources/k8s-metrics-servicemonitor-role.yaml
+- resources/odf-prometheus-role-binding.yaml
+- resources/odf-prometheus-role.yaml
+- resources/rook-ceph-metrics-role.yaml
+- resources/rook-ceph-monitor-role.yaml
+- resources/rook-metrics-role_binding.yaml
+- resources/rook-metrics-role.yaml
+- resources/rook-monitor-mgr-role_binding.yaml
+- resources/rook-monitor-mgr-role.yaml
+- resources/rook-monitor-role_binding.yaml
+- resources/rook-monitor-role.yaml
