@@ -33,7 +33,7 @@ require (
 	github.com/rook/rook/pkg/apis v0.0.0-20240327231646-b6b89a012a95
 	github.com/stretchr/testify v1.9.0
 	go.uber.org/multierr v1.11.0
-	golang.org/x/net v0.22.0
+	golang.org/x/net v0.23.0
 	google.golang.org/grpc v1.62.1
 	google.golang.org/protobuf v1.33.0
 	gopkg.in/ini.v1 v1.67.0
