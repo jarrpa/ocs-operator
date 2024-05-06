@@ -10,7 +10,7 @@ OCP_INSTALLER ?= $(OCP_DIR)/bin/openshift-install
 OCP_OC ?= $(OCP_BINDIR)/oc
 OCS_OC_PATH ?= $(OCP_OC)
 KUBECTL ?= $(OCP_BINDIR)/kubectl
-#KUBECONFIG ?= $(OCP_CLUSTER_CONFIG_DIR)/auth/kubeconfig
+#KUBECONFIG ?= $(OCP_CLUSTER_CONFIG_DIR)/kubeconfig-noingress-sno-dev
 TEST_DEPLOY_DIR ?= upgrade-testing
 
 RBAC_PROXY_IMG ?= gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
@@ -49,7 +49,7 @@ ci: shellcheck-test lint unit-test verify-deps verify-generated verify-latest-de
 
 watch: ##
 	clear; watch -ptn3 "\
-	${OCP_OC} get -n ${NAMESPACE} storagecluster,storageconsumer,storageclassrequest -o go-template-file=hack/watch.gotemplate --ignore-not-found; \
+	${OCP_OC} get -n ${NAMESPACE} storagecluster,storageconsumer,storagerequest -o go-template-file=hack/watch.gotemplate --ignore-not-found; \
 	${OCP_OC} get -n ${NAMESPACE} cephcluster,cephblockpool,cephfilesystem,cephfilesystemsubvolumegroup,cephclient -o go-template-file=hack/watch.gotemplate --ignore-not-found; \
 	${OCP_OC} get -n ${NAMESPACE} po; echo ""; \
 	echo "NAME"; ${OCP_OC} get sc -oname; ${OCP_OC} get pvc -l app=upgrade-testing -o name"
@@ -67,9 +67,9 @@ watch-resources: ##
 	while true; do \
 		tput cup 0 0; \
 		output="$$(\
-		${OCP_OC} get -n ${NAMESPACE} -o go-template-file=hack/watch.gotemplate --ignore-not-found storagecluster,storageconsumer,storageclassrequest; \
+		${OCP_OC} get -n ${NAMESPACE} -o go-template-file=hack/watch.gotemplate --ignore-not-found storagecluster,storageconsumer,storagerequest; \
 		${OCP_OC} get -n ${NAMESPACE} -o go-template-file=hack/watch.gotemplate --ignore-not-found cephcluster,cephblockpool,cephblockpoolradosnamespace,cephfilesystem,cephfilesystemsubvolumegroup,cephclient; \
-		${OCP_OC} get -n ${NAMESPACE} -o go-template-file=hack/watch.gotemplate --ignore-not-found storageclient,storageclassclaim,storageclaim 2>/dev/null; \
+		${OCP_OC} get -n ${NAMESPACE} -o go-template-file=hack/watch.gotemplate --ignore-not-found storageclient,storageclaim,storageclaim 2>/dev/null; \
 		$(OCP_OC) get -n ${NAMESPACE} -o go-template-file=hack/watch.gotemplate --ignore-not-found -l app=upgrade-testing pvc; \
 		$(OCP_OC) get -n ${NAMESPACE} sc -o custom-columns=STORAGECLASS:.metadata.name,PROVISIONER:.provisioner)"; \
 		clear; echo "$$output"; sleep 1; \
@@ -233,9 +233,8 @@ rosa-login-cluster: ##
 rosa-delete-cluster: ##
 	time bash -c "rosa delete cluster -y -c $(CLUSTER_NAME); rosa logs uninstall -c $(CLUSTER_NAME) --watch"
 
-#OCP_BIN_URL ?= https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest
 OCP_BIN_VER ?= latest
-OCP_BIN_URL ?= https://mirror.openshift.com/pub/openshift-v4/clients/ocp-dev-preview/$(OCP_BIN_VER)
+OCP_BIN_URL ?= https://mirror.openshift.com/pub/openshift-v4/clients/ocp/$(OCP_BIN_VER)
 OCP_BINS ?= openshift-client-linux.tar.gz openshift-install-linux.tar.gz opm-linux.tar.gz
 ocp-get-bin: ## Download latest stable OCP binaries
 	for bin in $(OCP_BINS); do \
