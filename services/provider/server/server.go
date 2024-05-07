@@ -20,6 +20,7 @@ import (
 	"github.com/red-hat-storage/ocs-operator/api/v4/v1alpha1"
 	ocsv1alpha1 "github.com/red-hat-storage/ocs-operator/api/v4/v1alpha1"
 	controllers "github.com/red-hat-storage/ocs-operator/v4/controllers/storageconsumer"
+	"github.com/red-hat-storage/ocs-operator/v4/pkg/operations"
 	pb "github.com/red-hat-storage/ocs-operator/v4/services/provider/pb"
 	ocsVersion "github.com/red-hat-storage/ocs-operator/v4/version"
 	rookCephv1 "github.com/rook/rook/pkg/apis/ceph.rook.io/v1"
@@ -31,6 +32,7 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
+	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/api/core/v1"
 	kerrors "k8s.io/apimachinery/pkg/api/errors"
@@ -663,6 +665,37 @@ func (s *OCSProviderServer) GetStorageClaimConfig(ctx context.Context, req *pb.S
 					"clusterID": getSubVolumeGroupClusterID(subVolumeGroup),
 					"csi.storage.k8s.io/snapshotter-secret-name": provisionerSecretName,
 				})})
+		}
+	}
+
+	if ops := storageRequest.Annotations[operations.PendingOperationsAnnotation]; ops != "" {
+		pendingOps := strings.Split(ops, ",")
+		for _, op := range pendingOps {
+			var job *batchv1.Job
+			jobData := map[string]string{}
+
+			phaseAnnotation := op + ".ops.ocs.openshift.io/phase"
+			phase := storageRequest.Annotations[phaseAnnotation]
+			jobData["op-type"] = op
+			jobData["op-phase"] = phase
+
+			job, err = operations.GetJob(op)
+			if err != nil {
+				klog.Errorf("no job for op %q", op)
+				continue
+			}
+
+			jobJSON, err := json.Marshal(job)
+			if err != nil {
+				panic("failed to marshal")
+			}
+			jobData["job-manifest"] = string(jobJSON)
+
+			extR = append(extR, &pb.ExternalResource{
+				Name: op + "-job",
+				Kind: "Job",
+				Data: mustMarshal(jobData),
+			})
 		}
 	}
 
