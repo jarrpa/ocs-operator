@@ -177,10 +177,14 @@ func (r *StorageRequestReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		})
 	enqueueForOwner := handler.EnqueueRequestForOwner(mgr.GetScheme(), mgr.GetRESTMapper(), &v1alpha1.StorageRequest{})
 
+	// Compose a predicate that is an OR of the specified predicates
+	srPredicate := util.ComposePredicates(
+		predicate.GenerationChangedPredicate{},
+		util.MetadataChangedPredicate{},
+	)
+
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&v1alpha1.StorageRequest{}, builder.WithPredicates(
-			predicate.GenerationChangedPredicate{},
-		)).
+		For(&v1alpha1.StorageRequest{}, builder.WithPredicates(srPredicate)).
 		Owns(&rookCephv1.CephBlockPoolRadosNamespace{}).
 		Watches(&rookCephv1.CephFilesystemSubVolumeGroup{}, enqueueForOwner).
 		Watches(&rookCephv1.CephClient{}, enqueueForOwner).
