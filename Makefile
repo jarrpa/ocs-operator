@@ -77,6 +77,10 @@ ocs-metrics-exporter: build
 	@echo "Building the ocs-metrics-exporter image"
 	hack/build-metrics-exporter.sh
 
+volume-migration-tool:
+	@echo "Building the ocs-volume-migration image"
+	hack/build-volume-migration.sh
+
 gen-protobuf:
 	@echo "Generating protobuf files for gRPC services"
 	hack/gen-protobuf.sh
