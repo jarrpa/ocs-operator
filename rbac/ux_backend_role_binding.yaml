@@ -9,4 +9,3 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: ux-backend-server
-  namespace: openshift-storage
